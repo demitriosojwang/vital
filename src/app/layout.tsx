@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,24 +16,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "E Contractor | Kenya's Trusted Contractor Vetting & Scoring Platform",
+  description: "Find, vet, and rate construction contractors in Kenya. Composite scoring across on-time delivery, quality, sub-contractor payment, responsiveness, and dispute history. Built for county governments, developers, and the Kenyan diaspora.",
+  keywords: ["Kenya contractors", "construction vetting", "contractor scoring", "NCA verification", "M-Pesa escrow", "Kenya construction", "contractor reviews", "project tracking"],
+  authors: [{ name: "E Contractor" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "E Contractor - Kenya's Trusted Contractor Platform",
+    description: "Vet, score, and track construction contractors with transparent composite scoring across 5 dimensions.",
+    siteName: "E Contractor",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
   },
 };
 
@@ -45,7 +41,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <Navbar />
+        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <Footer />
         <Toaster />
       </body>
     </html>
