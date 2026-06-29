@@ -1,0 +1,353 @@
+
+<style>
+  h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .tabs{display:flex;gap:8px;margin:0 0 20px;flex-wrap:wrap}
+  .tab{padding:7px 14px;border-radius:var(--border-radius-lg);border:1.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:13px;cursor:pointer;font-weight:400}
+  .tab.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500}
+  .panel{display:none}
+  .panel.active{display:block}
+  .stage-row{display:flex;gap:0;margin-bottom:24px;position:relative}
+  .stage-row::before{content:'';position:absolute;top:18px;left:0;right:0;height:1.5px;background:var(--color-border-tertiary);z-index:0}
+  .stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1}
+  .stage-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border:2px solid var(--color-background-primary)}
+  .stage-label{font-size:11px;color:var(--color-text-tertiary);text-align:center;max-width:72px;line-height:1.3}
+  .stage-label.active-stage{color:var(--color-text-primary);font-weight:500}
+  .dot-gray{background:var(--color-background-secondary);color:var(--color-text-secondary);border-color:var(--color-border-secondary)}
+  .dot-purple{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+  .dot-teal{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+  .dot-amber{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+  .dot-blue{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+  .feature-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:12px;overflow:hidden}
+  .feature-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;background:var(--color-background-secondary)}
+  .feature-head:hover{background:var(--color-background-primary)}
+  .feature-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .feature-sub{font-size:12px;color:var(--color-text-tertiary);margin-top:2px}
+  .feature-body{padding:14px 16px;border-top:0.5px solid var(--color-border-tertiary);display:none}
+  .feature-body.open{display:block}
+  .feature-body p{font-size:13px;color:var(--color-text-secondary);line-height:1.7;margin:0 0 10px}
+  .feature-body p:last-child{margin-bottom:0}
+  .chevron{font-size:14px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0}
+  .chevron.open{transform:rotate(180deg)}
+  .tag{font-size:11px;padding:2px 8px;border-radius:12px;white-space:nowrap}
+  .tag-new{background:#EEEDFE;color:#3C3489}
+  .tag-extends{background:#E1F5EE;color:#085041}
+  .tag-api{background:#FAEEDA;color:#633806}
+  .section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-tertiary);margin:0 0 10px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+  .compare-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;background:var(--color-background-secondary)}
+  .compare-card.highlighted{border-color:#5DCAA5;background:var(--color-background-primary)}
+  .compare-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .cl-before{color:#A32D2D}
+  .cl-after{color:#085041}
+  .compare-item{font-size:13px;color:var(--color-text-secondary);line-height:1.6;padding:4px 0;display:flex;gap:6px;align-items:flex-start}
+  .compare-item::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+  .item-bad::before{background:#E24B4A}
+  .item-good::before{background:#1D9E75}
+  .revenue-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+  .revenue-table th{text-align:left;font-weight:500;color:var(--color-text-tertiary);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:6px 0;border-bottom:1px solid var(--color-border-tertiary)}
+  .revenue-table td{padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);vertical-align:top;font-size:13px}
+  .revenue-table tr:last-child td{border-bottom:none}
+  .td-bold{color:var(--color-text-primary);font-weight:500}
+  .mock-tender{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:16px}
+  .mock-header{background:var(--color-background-secondary);padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .mock-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .mock-meta{font-size:12px;color:var(--color-text-tertiary);margin-top:2px}
+  .bidder-row{display:grid;grid-template-columns:32px 1fr 80px 80px 80px 90px;align-items:center;gap:10px;padding:10px 16px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+  .bidder-row:last-child{border-bottom:none}
+  .bidder-row.header{background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em}
+  .bidder-row.winner{background:linear-gradient(90deg,rgba(29,158,117,.06) 0%,transparent 100%)}
+  .rank-badge{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+  .rank-1{background:#EAF3DE;color:#27500A}
+  .rank-2{background:#E6F1FB;color:#0C447C}
+  .rank-3{background:#F1EFE8;color:#444441}
+  .rank-x{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+  .score-bar-wrap{display:flex;align-items:center;gap:6px}
+  .score-bar{height:4px;border-radius:2px;background:var(--color-border-tertiary);flex:1;overflow:hidden}
+  .score-bar-fill{height:100%;border-radius:2px}
+  .score-num{font-size:12px;font-weight:500;min-width:24px;text-align:right}
+  .flag-pill{font-size:10px;padding:1px 6px;border-radius:10px}
+  .fp-green{background:#EAF3DE;color:#27500A}
+  .fp-amber{background:#FAEEDA;color:#633806}
+  .fp-red{background:#FCEBEB;color:#791F1F}
+  .fp-gray{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+  .slider-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;color:var(--color-text-secondary)}
+  .slider-wrap input{flex:1}
+  .slider-val{min-width:40px;font-weight:500;color:var(--color-text-primary);font-size:13px;text-align:right}
+</style>
+
+<h2 class="sr-only">Contractor tracking platform integration with the tendering stage</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('overview')">Where it fits</button>
+  <button class="tab" onclick="sw('prequalify')">Prequalification</button>
+  <button class="tab" onclick="sw('evaluate')">Bid evaluation</button>
+  <button class="tab" onclick="sw('monitor')">Post-award</button>
+  <button class="tab" onclick="sw('revenue')">Revenue angle</button>
+</div>
+
+<!-- WHERE IT FITS -->
+<div class="panel active" id="p-overview">
+  <div class="section-label">The tender lifecycle — where the platform adds value</div>
+  <div class="stage-row">
+    <div class="stage"><div class="stage-dot dot-gray">📋</div><div class="stage-label">Tender notice published</div></div>
+    <div class="stage"><div class="stage-dot dot-purple">✓</div><div class="stage-label active-stage">Prequalification</div></div>
+    <div class="stage"><div class="stage-dot dot-teal">📊</div><div class="stage-label active-stage">Bid evaluation</div></div>
+    <div class="stage"><div class="stage-dot dot-gray">📝</div><div class="stage-label">Contract award</div></div>
+    <div class="stage"><div class="stage-dot dot-amber">🏗️</div><div class="stage-label active-stage">Execution</div></div>
+    <div class="stage"><div class="stage-dot dot-blue">⭐</div><div class="stage-label active-stage">Completion review</div></div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-label cl-before">Without the platform</div>
+      <div class="compare-item item-bad">Procurement officers manually call references — often fabricated</div>
+      <div class="compare-item item-bad">No way to verify NCA category matches project complexity</div>
+      <div class="compare-item item-bad">Contractor past performance is word-of-mouth or unknown</div>
+      <div class="compare-item item-bad">Politically connected contractors bypass merit evaluation</div>
+      <div class="compare-item item-bad">No record of contractor abandoning previous public works</div>
+      <div class="compare-item item-bad">BoQ padding and variation claims go undetected until it is too late</div>
+    </div>
+    <div class="compare-card highlighted">
+      <div class="compare-label cl-after">With the platform</div>
+      <div class="compare-item item-good">Verified performance scores replace unreliable reference calls</div>
+      <div class="compare-item item-good">Automated NCA category check against project value threshold</div>
+      <div class="compare-item item-good">Auditable project history with client-verified completion data</div>
+      <div class="compare-item item-good">Score is evidence-based — resistant to political manipulation</div>
+      <div class="compare-item item-good">Public works abandonment visible in dispute + project history</div>
+      <div class="compare-item item-good">Financial health signals (CRB, iTax) surface cash flow risk early</div>
+    </div>
+  </div>
+
+  <div class="section-label">Three ways to integrate</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.8">
+    <strong style="color:var(--color-text-primary)">1. Standalone tool for private clients</strong> — developers, NGOs, and individuals use the platform to vet contractors before inviting them to tender. No system integration needed. This is your MVP market.<br><br>
+    <strong style="color:var(--color-text-primary)">2. Embedded prequalification for institutional clients</strong> — large developers or county governments use your platform as their official prequalification register. Contractors must have a verified profile to be invited to tender. Medium complexity — requires a formal MOU.<br><br>
+    <strong style="color:var(--color-text-primary)">3. Tender management module</strong> — the platform extends into full tender management: publishing notices, collecting bids, running weighted scoring, and issuing award letters. This is a larger product build but creates deep lock-in and very high switching costs.
+  </div>
+</div>
+
+<!-- PREQUALIFICATION -->
+<div class="panel" id="p-prequalify">
+  <div class="section-label">What prequalification automation looks like</div>
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Automatic eligibility check</div><div class="feature-sub">Screens contractors before they can even submit a bid</div></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="tag tag-extends">Extends platform</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>When a procuring entity publishes a tender on the platform (or imports one), they set eligibility thresholds. The system automatically checks every bidder against these criteria and issues a pass/fail with a reason.</p>
+      <p><strong style="color:var(--color-text-primary)">Checks run automatically:</strong> NCA category ≥ required category · Active NCA licence (not expired) · iTax compliance certificate valid · CRB clear (or within acceptable threshold) · No active blacklist flag · Minimum composite score (client-configurable, e.g. ≥ 55) · At least N completed projects of similar type and value · No project abandonment in past 3 years</p>
+      <p>Contractors who fail see exactly which criteria they missed — and what they need to fix to qualify for the next tender. This gives the platform a strong reason for contractors to keep their profiles current.</p>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Standing prequalification register</div><div class="feature-sub">Clients build a vetted shortlist once, use it repeatedly</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-new">New feature</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>Large clients (county governments, large developers, NGOs with multi-year programmes) can maintain a standing prequalified register — a list of contractors who have passed all eligibility checks and are pre-approved to bid on projects up to a defined value threshold.</p>
+      <p>The register refreshes automatically: if a contractor's NCA licence expires or their score drops below the threshold, they are removed from the register and notified. This removes the costly annual prequalification exercise most public entities run.</p>
+      <p><strong style="color:var(--color-text-primary)">Revenue:</strong> Institutional clients pay an annual fee (KES 80,000–300,000) for a managed standing register. This is your highest-value institutional product.</p>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Prequalification report PDF</div><div class="feature-sub">Audit-ready document for procurement files</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-extends">Extends platform</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>For each tender, the platform generates a prequalification report: a stamped, dated PDF listing all invited contractors, their eligibility status, scores, and pass/fail reasoning. This goes into the procurement file as evidence of due diligence.</p>
+      <p>For public sector clients, this is critical — the Public Procurement and Asset Disposal Act 2015 requires documented justification for contractor selection. The platform provides this automatically. This single feature is enough to justify the platform to a county procurement officer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BID EVALUATION -->
+<div class="panel" id="p-evaluate">
+  <div class="section-label">Interactive bid evaluation — adjust weights to see ranking change</div>
+
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:14px 16px;margin-bottom:16px">
+    <div class="section-label" style="margin-bottom:12px">Evaluation weight configuration</div>
+    <div class="slider-wrap"><span style="min-width:140px">Financial (price)</span><input type="range" min="0" max="80" value="50" id="w-price" step="5" oninput="recalc()"><span class="slider-val" id="v-price">50%</span></div>
+    <div class="slider-wrap"><span style="min-width:140px">Technical (score)</span><input type="range" min="0" max="80" value="30" id="w-tech" step="5" oninput="recalc()"><span class="slider-val" id="v-tech">30%</span></div>
+    <div class="slider-wrap"><span style="min-width:140px">Experience</span><input type="range" min="0" max="40" value="20" id="w-exp" step="5" oninput="recalc()"><span class="slider-val" id="v-exp">20%</span></div>
+    <div style="font-size:12px;color:var(--color-text-tertiary);margin-top:4px" id="weight-warning"></div>
+  </div>
+
+  <div class="mock-tender">
+    <div class="mock-header">
+      <div class="mock-title">Tender: Westlands storm drain rehabilitation — KES 14.2M</div>
+      <div class="mock-meta">Nairobi County · NCA4 minimum · 5 bidders · Closes 14 Jun 2026</div>
+    </div>
+    <div class="bidder-row header">
+      <div>Rank</div><div>Contractor</div><div>Price score</div><div>Tech score</div><div>Exp score</div><div>Total</div>
+    </div>
+    <div id="bidder-list"></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Abnormally low bid detection</div><div class="feature-sub">Flags bids that are statistically unlikely to be deliverable</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-new">New feature</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>A contractor bidding 35% below the next lowest bid is a serious risk signal — either they have made an error, they plan to claim variations later, or they intend to use substandard materials. The platform flags bids that fall more than a configurable threshold (default: 20%) below the average of the other bids.</p>
+      <p>Flagged bids are not automatically disqualified. The procuring entity receives an alert and can request a bid price justification before proceeding. This is aligned with PPADA 2015 provisions on abnormally low tenders.</p>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Conflict of interest detection</div><div class="feature-sub">Cross-references directors and beneficial owners</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-new">New feature</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>When multiple contractors bid on the same tender, the platform cross-references their registered directors (from the company profiles). If two bidding companies share a director, the platform flags a potential conflict — they may be affiliated entities creating a false impression of competition.</p>
+      <p>This is especially valuable for county government tenders where bid-rigging through related companies is common. The flag goes to the tender committee, not the public.</p>
+    </div>
+  </div>
+</div>
+
+<!-- POST-AWARD MONITORING -->
+<div class="panel" id="p-monitor">
+  <div class="section-label">Turning contract execution into platform data</div>
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Milestone tracking and payment certification</div><div class="feature-sub">Client logs progress, contractor confirms — creates audit trail</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-new">New feature</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>After contract award, the client sets up milestones (e.g. substructure complete, slab poured, roofing done, practical completion). For each milestone, the client submits a progress log with a date and optional photo. The contractor confirms or disputes each log entry.</p>
+      <p>This data feeds directly into the on-time delivery and workmanship scores at completion. It also creates an auditable paper trail that protects both parties in the event of a dispute — you know exactly when each milestone was certified and by whom.</p>
+      <p><strong style="color:var(--color-text-primary)">Side benefit:</strong> Payment certificates linked to milestones give the client clear justification for each payment — reducing disputes over whether a milestone was genuinely achieved before payment was released.</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Early warning flags during execution</div><div class="feature-sub">Detects distress signals before a project fails</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-new">New feature</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>The platform can surface warning signals that a contractor is in distress mid-project: a milestone is 4+ weeks overdue with no update · the contractor's CRB status changes to adverse during execution · the contractor's NCA licence lapses · a dispute is raised on a different project they are running simultaneously.</p>
+      <p>These flags are sent to the client automatically. Early warning gives the client time to intervene — issue a formal notice, bring in a supervisor, or invoke the performance bond — before the project fully collapses.</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-head" onclick="tog(this)">
+      <div><div class="feature-title">Completion review — closing the loop</div><div class="feature-sub">Turns every project into platform data for the next tender</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="tag tag-extends">Extends platform</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="feature-body">
+      <p>At practical completion, the platform prompts the client to submit a structured completion review — prefilled with the milestone data already collected. Because the data has been logged throughout the project, the review takes minutes rather than requiring the client to recall events from months ago.</p>
+      <p>This is how you build a high-quality, granular review database without asking clients to do a lot of work. The effort is distributed across the project lifecycle — not dumped onto the client at the end when they have moved on to the next thing.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVENUE -->
+<div class="panel" id="p-revenue">
+  <div class="section-label">How tendering unlocks new revenue streams</div>
+  <table class="revenue-table">
+    <thead><tr><th>Product</th><th>Buyer</th><th>Price</th><th>Volume potential</th></tr></thead>
+    <tbody>
+      <tr><td class="td-bold">Tender listing fee</td><td>Procuring entity</td><td>KES 5,000 – 15,000 per tender</td><td>High — every published tender is a transaction</td></tr>
+      <tr><td class="td-bold">Bid submission fee</td><td>Bidding contractor</td><td>KES 1,000 – 3,000 per bid</td><td>Very high — multiplied by number of bidders</td></tr>
+      <tr><td class="td-bold">Prequalification report</td><td>Procuring entity</td><td>KES 25,000 – 80,000</td><td>Medium — per tender, high margin</td></tr>
+      <tr><td class="td-bold">Standing register (annual)</td><td>Large developer / county</td><td>KES 80,000 – 300,000 / yr</td><td>Low volume, very high value</td></tr>
+      <tr><td class="td-bold">Milestone tracking module</td><td>Client per project</td><td>KES 8,000 – 25,000 / project</td><td>Medium — correlates with platform project volume</td></tr>
+      <tr><td class="td-bold">Conflict of interest check</td><td>Procuring entity</td><td>KES 5,000 per tender</td><td>High value for public sector</td></tr>
+      <tr><td class="td-bold">Performance bond integration</td><td>Insurer / bank API</td><td>Revenue share on bonds issued</td><td>Long-term — requires financial partnerships</td></tr>
+    </tbody>
+  </table>
+
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;border:0.5px solid var(--color-border-tertiary)">
+    <div class="section-label">The compounding effect</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.8">
+      Every tender run on the platform generates reviews at completion → reviews improve the score database → better scores make prequalification more credible → more clients trust the platform for tendering → more tenders run → more reviews collected. The tendering module and the review database are a <strong style="color:var(--color-text-primary)">self-reinforcing loop</strong>. This is why extending into tendering is not just a revenue decision — it is a data strategy.
+    </div>
+  </div>
+</div>
+
+<script>
+const bidders = [
+  { name:'Juma Mbeki Construction', price:14200000, tech:74, exp:68, crb:'Clear', docs:'Valid' },
+  { name:'Savanna Civil Works', price:13100000, tech:81, exp:79, crb:'Clear', docs:'Valid' },
+  { name:'Redstone Contractors Ltd', price:12400000, tech:55, exp:41, crb:'Adverse', docs:'Valid' },
+  { name:'Meridian Builders', price:15800000, tech:88, exp:85, crb:'Clear', docs:'Expired' },
+  { name:'Apex Infrastructure', price:13900000, tech:67, exp:72, crb:'Clear', docs:'Valid' },
+];
+
+function priceScore(p, bids) {
+  const min = Math.min(...bids.map(b => b.price));
+  return Math.round((min / p) * 100);
+}
+
+function recalc() {
+  const wP = +document.getElementById('w-price').value;
+  const wT = +document.getElementById('w-tech').value;
+  const wE = +document.getElementById('w-exp').value;
+  const total = wP + wT + wE;
+  document.getElementById('v-price').textContent = wP + '%';
+  document.getElementById('v-tech').textContent = wT + '%';
+  document.getElementById('v-exp').textContent = wE + '%';
+  const warn = document.getElementById('weight-warning');
+  if (total !== 100) {
+    warn.textContent = '⚠ Weights sum to ' + total + '% — adjust to total 100% for a valid evaluation.';
+    warn.style.color = 'var(--color-text-warning)';
+  } else {
+    warn.textContent = '✓ Weights sum to 100%';
+    warn.style.color = 'var(--color-text-success)';
+  }
+
+  const prices = bidders.map(b => b.price);
+  const avgPrice = prices.reduce((a,b) => a+b,0)/prices.length;
+
+  const scored = bidders.map(b => {
+    const ps = priceScore(b.price, prices);
+    const total_score = Math.round((ps * wP + b.tech * wT + b.exp * wE) / 100);
+    const lowBid = b.price < avgPrice * 0.80;
+    return { ...b, ps, total_score, lowBid };
+  }).sort((a,b) => b.total_score - a.total_score);
+
+  const list = document.getElementById('bidder-list');
+  list.innerHTML = scored.map((b, i) => {
+    const rankClass = ['rank-1','rank-2','rank-3','rank-x','rank-x'][i];
+    const flagCrb = b.crb !== 'Clear' ? '<span class="flag-pill fp-red">CRB adverse</span>' : '';
+    const flagDocs = b.docs !== 'Valid' ? '<span class="flag-pill fp-amber">Docs expired</span>' : '';
+    const flagLow = b.lowBid ? '<span class="flag-pill fp-amber">Low bid ⚠</span>' : '';
+    const flags = flagCrb || flagDocs || flagLow;
+    const rowClass = i===0 ? 'bidder-row winner' : 'bidder-row';
+    return `<div class="${rowClass}">
+      <div><div class="rank-badge ${rankClass}">${i+1}</div></div>
+      <div><div style="font-size:13px;color:var(--color-text-primary)">${b.name}</div>${flags ? '<div style="margin-top:3px;display:flex;gap:4px;flex-wrap:wrap">'+flags+'</div>' : ''}</div>
+      <div>
+        <div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:${b.ps}%;background:#1D9E75"></div></div><span class="score-num">${b.ps}</span></div>
+      </div>
+      <div>
+        <div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:${b.tech}%;background:#378ADD"></div></div><span class="score-num">${b.tech}</span></div>
+      </div>
+      <div>
+        <div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:${b.exp}%;background:#7F77DD"></div></div><span class="score-num">${b.exp}</span></div>
+      </div>
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">${b.total_score}<span style="font-size:11px;color:var(--color-text-tertiary)">/100</span></div>
+    </div>`;
+  }).join('');
+}
+
+function sw(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function tog(head){
+  const body = head.nextElementSibling;
+  const chev = head.querySelector('.chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+recalc();
+</script>

@@ -1,0 +1,263 @@
+
+<style>
+  h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  body{margin:0;padding:0}
+  .wrap{padding:4px 0 16px}
+  .section-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin:0 0 4px}
+  .section-sub{font-size:14px;color:var(--color-text-secondary);margin:0 0 20px;line-height:1.6}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+  .card{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+  .card-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-tertiary);margin-bottom:6px}
+  .card-val{font-size:14px;color:var(--color-text-primary);line-height:1.5}
+  .divider{border:none;border-top:1px solid var(--color-border-tertiary);margin:16px 0}
+  .label-sm{font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+  .tabs{display:flex;gap:8px;margin:0 0 20px;flex-wrap:wrap}
+  .tab{padding:7px 14px;border-radius:var(--border-radius-lg);border:1.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:13px;cursor:pointer;transition:all .18s;font-weight:400}
+  .tab.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500}
+  .panel{display:none}
+  .panel.active{display:block}
+  .flow{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+  .flow-step{display:flex;align-items:flex-start;gap:12px}
+  .flow-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:2px}
+  .dot-purple{background:#EEEDFE;color:#3C3489}
+  .dot-teal{background:#E1F5EE;color:#085041}
+  .dot-amber{background:#FAEEDA;color:#633806}
+  .dot-coral{background:#FAECE7;color:#712B13}
+  .dot-blue{background:#E6F1FB;color:#0C447C}
+  .dot-green{background:#EAF3DE;color:#27500A}
+  .flow-line{width:1.5px;background:var(--color-border-tertiary);height:20px;margin-left:13px}
+  .flow-content{flex:1;padding-bottom:16px}
+  .flow-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .flow-desc{font-size:13px;color:var(--color-text-secondary);margin-top:3px;line-height:1.5}
+  .stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .tag{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+  .tag.purple{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+  .tag.teal{background:#E1F5EE;border-color:#5DCAA5;color:#085041}
+  .tag.amber{background:#FAEEDA;border-color:#EF9F27;color:#633806}
+  .tag.coral{background:#FAECE7;border-color:#F0997B;color:#712B13}
+  .tag.blue{background:#E6F1FB;border-color:#85B7EB;color:#0C447C}
+  .tag.green{background:#EAF3DE;border-color:#97C459;color:#27500A}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);margin:0 8px 8px 0}
+  .pill.bad::before{content:'';width:6px;height:6px;border-radius:50%;background:#E24B4A;flex-shrink:0}
+  .pill.good::before{content:'';width:6px;height:6px;border-radius:50%;background:#1D9E75;flex-shrink:0}
+  .profile-card{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px}
+  .profile-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;flex-shrink:0}
+  .av-teal{background:#E1F5EE;color:#085041}
+  .av-amber{background:#FAEEDA;color:#633806}
+  .av-coral{background:#FAECE7;color:#712B13}
+  .profile-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .profile-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+  .score-row{display:flex;gap:8px;flex-wrap:wrap}
+  .score-pill{font-size:11px;padding:3px 8px;border-radius:12px}
+  .sp-green{background:#EAF3DE;color:#27500A}
+  .sp-amber{background:#FAEEDA;color:#633806}
+  .sp-red{background:#FCEBEB;color:#791F1F}
+  .sp-blue{background:#E6F1FB;color:#0C447C}
+  .stars{color:#BA7517;font-size:13px;letter-spacing:1px}
+  .project-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--color-border-tertiary);font-size:13px}
+  .project-row:last-child{border-bottom:none}
+  .proj-name{color:var(--color-text-primary)}
+  .proj-meta{color:var(--color-text-tertiary);font-size:12px}
+  .proj-badge{font-size:11px;padding:2px 8px;border-radius:12px}
+  .pb-green{background:#EAF3DE;color:#27500A}
+  .pb-red{background:#FCEBEB;color:#791F1F}
+  .pb-amber{background:#FAEEDA;color:#633806}
+  .mono-block{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;line-height:1.8;color:var(--color-text-secondary);margin-bottom:16px}
+  .mono-key{color:var(--color-text-tertiary)}
+  .mono-val{color:var(--color-text-primary)}
+  .revenue-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+  .revenue-table th{text-align:left;font-weight:500;color:var(--color-text-tertiary);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:6px 0;border-bottom:1px solid var(--color-border-tertiary)}
+  .revenue-table td{padding:9px 0;border-bottom:1px solid var(--color-border-tertiary);color:var(--color-text-secondary);vertical-align:top}
+  .revenue-table tr:last-child td{border-bottom:none}
+  .td-name{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Contractor tracking platform deep dive</h2>
+
+<p class="section-title">Contractor tracking & vetting platform</p>
+<p class="section-sub">No centralised, trustworthy database of contractor performance exists in East Africa. Clients hire blindly. Bad contractors repeat failures across multiple clients with zero accountability. This platform fixes that by creating a verified track record for every registered contractor.</p>
+
+<div class="card-grid">
+  <div class="card"><div class="card-label">Core pain</div><div class="card-val">A client hires a contractor based on word-of-mouth. Contractor abandons site, disappears with materials, or delivers poor work. The next client has no way to know this happened.</div></div>
+  <div class="card"><div class="card-label">Who pays</div><div class="card-val">Contractors pay to list & verify. Clients (individuals, developers, NGOs) pay to access detailed records. Banks & insurers pay for due diligence API access.</div></div>
+  <div class="card"><div class="card-label">Regulatory angle</div><div class="card-val">NCA (National Construction Authority) already registers contractors but has no performance layer. You plug directly into that gap — or eventually partner with them.</div></div>
+  <div class="card"><div class="card-label">Network effect</div><div class="card-val">More contractors listed → more useful to clients → more clients checking → contractors want to be verified. Classic marketplace flywheel.</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('features')">Core features</button>
+  <button class="tab" onclick="sw('profile')">Contractor profile</button>
+  <button class="tab" onclick="sw('model')">Business model</button>
+  <button class="tab" onclick="sw('build')">How to build</button>
+</div>
+
+<!-- FEATURES -->
+<div class="panel active" id="p-features">
+  <div class="label-sm">What the platform tracks</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-dot dot-purple">1</div>
+      <div class="flow-content"><div class="flow-title">Identity & registration verification</div><div class="flow-desc">NCA registration number, business PIN, directors' IDs, physical address. Cross-checked against NCA public register via scraping or API.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-teal">2</div>
+      <div class="flow-content"><div class="flow-title">Project history</div><div class="flow-desc">Clients submit project reports — scope, contract value, start/end dates, payment disputes, and a structured rating. Contractor can respond to each report.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-amber">3</div>
+      <div class="flow-content"><div class="flow-title">Performance scoring</div><div class="flow-desc">Composite score across: on-time delivery, quality of workmanship, payment to sub-contractors, responsiveness, and dispute history. Weighted by project value.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-coral">4</div>
+      <div class="flow-content"><div class="flow-title">Financial health signals</div><div class="flow-desc">CRB status check, tax compliance certificate status (iTax), and payment history with suppliers. Optional bank statement analysis for prequalification.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-blue">5</div>
+      <div class="flow-content"><div class="flow-title">Dispute & blacklist registry</div><div class="flow-desc">Structured dispute logs with both-party statements. A contractor with 3+ unresolved disputes gets flagged. Public blacklist for confirmed fraud cases.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-green">6</div>
+      <div class="flow-content"><div class="flow-title">Document vault</div><div class="flow-desc">Contractors upload and timestamp: insurance certificates, NCA licence, certified personnel lists, equipment inventory. Clients see what's current vs. expired.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MOCKUP -->
+<div class="panel" id="p-profile">
+  <div class="label-sm">Sample contractor profile</div>
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="avatar av-teal">JM</div>
+      <div>
+        <div class="profile-name">Juma Mbeki Construction Ltd</div>
+        <div class="profile-sub">NCA/2019/04712 · NCA Category NCA6 · Nairobi, Kenya</div>
+      </div>
+    </div>
+    <div class="score-row" style="margin-bottom:10px">
+      <span class="score-pill sp-green">✓ Verified</span>
+      <span class="score-pill sp-green">iTax compliant</span>
+      <span class="score-pill sp-blue">CRB: Clear</span>
+      <span class="score-pill sp-amber">1 open dispute</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:28px;font-weight:500;color:var(--color-text-primary)">74</div>
+      <div>
+        <div class="stars">★★★★☆</div>
+        <div style="font-size:12px;color:var(--color-text-tertiary)">Performance score · 11 projects</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">KES 48M</div>
+        <div style="font-size:12px;color:var(--color-text-tertiary)">Total project value</div>
+      </div>
+    </div>
+    <hr class="divider" style="margin:10px 0">
+    <div class="label-sm" style="margin-bottom:8px">Recent projects</div>
+    <div class="project-row"><div><div class="proj-name">Kiambu County Roads Rehab</div><div class="proj-meta">KES 12.4M · Completed Mar 2024</div></div><span class="proj-badge pb-green">On time</span></div>
+    <div class="project-row"><div><div class="proj-name">Parklands Apartment Block (4 floors)</div><div class="proj-meta">KES 18.2M · Completed Oct 2023</div></div><span class="proj-badge pb-amber">+6 weeks late</span></div>
+    <div class="project-row"><div><div class="proj-name">Thika Road Drainage Works</div><div class="proj-meta">KES 6.1M · Completed Jan 2023</div></div><span class="proj-badge pb-red">Dispute filed</span></div>
+  </div>
+
+  <div class="label-sm">Score breakdown</div>
+  <div class="mono-block">
+    <span class="mono-key">On-time delivery        </span><span class="mono-val">68 / 100</span><br>
+    <span class="mono-key">Workmanship quality     </span><span class="mono-val">81 / 100</span><br>
+    <span class="mono-key">Sub-contractor payment  </span><span class="mono-val">72 / 100</span><br>
+    <span class="mono-key">Responsiveness          </span><span class="mono-val">79 / 100</span><br>
+    <span class="mono-key">Dispute history         </span><span class="mono-val">58 / 100  ← flagged</span><br>
+    <span class="mono-key">─────────────────────── </span><br>
+    <span class="mono-key">Composite score         </span><span class="mono-val">74 / 100  (weighted)</span>
+  </div>
+</div>
+
+<!-- BUSINESS MODEL -->
+<div class="panel" id="p-model">
+  <div class="label-sm">Revenue streams</div>
+  <table class="revenue-table">
+    <thead><tr><th>Stream</th><th>Who pays</th><th>Price</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="td-name">Contractor listing (basic)</td><td>Contractor</td><td>Free</td><td>Profile + NCA number only. Drives supply-side growth.</td></tr>
+      <tr><td class="td-name">Verified badge</td><td>Contractor</td><td>KES 3,000 / yr</td><td>ID check, document review, NCA cross-check. High conversion — contractors want to stand out.</td></tr>
+      <tr><td class="td-name">Premium profile</td><td>Contractor</td><td>KES 8,000 / yr</td><td>Featured placement, portfolio photos, equipment list, response to reviews.</td></tr>
+      <tr><td class="td-name">Client search access</td><td>Client / developer</td><td>KES 2,000 / search or KES 15,000 / yr</td><td>Full score, project history, dispute records. One-time search for individuals, subscription for firms.</td></tr>
+      <tr><td class="td-name">Pre-qualification report</td><td>NGO / county / developer</td><td>KES 25,000 – 80,000</td><td>Formatted due diligence report for tendering. High margin, low volume.</td></tr>
+      <tr><td class="td-name">API access</td><td>Banks / insurers / procurement platforms</td><td>KES 50,000 – 200,000 / yr</td><td>Real-time contractor score for loan underwriting or insurance pricing. Long sales cycle, high value.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="label-sm">Growth strategy</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-dot dot-purple">1</div>
+      <div class="flow-content"><div class="flow-title">Seed supply</div><div class="flow-desc">Start by listing all NCA-registered contractors (public data). Give them free basic profiles. They'll find you via Google when clients search their name.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-teal">2</div>
+      <div class="flow-content"><div class="flow-title">Win first institutional client</div><div class="flow-desc">Target one large developer (e.g. Unity Homes, Centum Real Estate) or an NGO with 10+ concurrent contracts. Their project submissions build your review database fast.</div></div>
+    </div>
+    <div class="flow-line"></div>
+    <div class="flow-step">
+      <div class="flow-dot dot-amber">3</div>
+      <div class="flow-content"><div class="flow-title">Partner with NCA or AQSK</div><div class="flow-desc">Position as the performance layer on top of their registration system. Makes the platform semi-official and drives contractor sign-ups.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO BUILD -->
+<div class="panel" id="p-build">
+  <div class="label-sm">Tech stack</div>
+  <div class="stack-row">
+    <span class="tag purple">Next.js frontend</span>
+    <span class="tag teal">Django / FastAPI backend</span>
+    <span class="tag amber">PostgreSQL + full-text search</span>
+    <span class="tag blue">M-Pesa API (payments)</span>
+    <span class="tag coral">Africa's Talking (SMS alerts)</span>
+    <span class="tag green">Cloudflare R2 (document storage)</span>
+  </div>
+
+  <div class="label-sm">MVP scope (3 months)</div>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot dot-purple">1</div><div class="flow-content"><div class="flow-title">Contractor profiles</div><div class="flow-desc">Registration, NCA number entry, document upload, basic info. No automated verification yet — manual review queue for team.</div></div></div>
+    <div class="flow-line"></div>
+    <div class="flow-step"><div class="flow-dot dot-teal">2</div><div class="flow-content"><div class="flow-title">Project review submission</div><div class="flow-desc">Clients fill a structured form: project type, value, dates, 5 rating dimensions, free text. Both parties get an email to acknowledge/dispute.</div></div></div>
+    <div class="flow-line"></div>
+    <div class="flow-step"><div class="flow-dot dot-amber">3</div><div class="flow-content"><div class="flow-title">Search & score</div><div class="flow-desc">Public search by name or NCA number returns score + review count. Full history locked behind paywall. M-Pesa pay-per-search.</div></div></div>
+    <div class="flow-line"></div>
+    <div class="flow-step"><div class="flow-dot dot-coral">4</div><div class="flow-content"><div class="flow-title">Admin moderation panel</div><div class="flow-desc">Internal tool to review flagged reviews, verify documents, resolve disputes, and manage blacklist entries.</div></div></div>
+  </div>
+
+  <hr class="divider">
+  <div class="label-sm">Key challenges</div>
+  <div>
+    <span class="pill bad">Fake reviews — clients and contractors both have incentives to manipulate</span>
+    <span class="pill bad">Legal risk — a contractor listed with false negative reviews could sue</span>
+    <span class="pill bad">Cold start — neither side uses it until the other side is already there</span>
+    <span class="pill bad">Contractors in Kenya often operate informally — may resist being rated publicly</span>
+  </div>
+  <hr class="divider">
+  <div class="label-sm">How to mitigate</div>
+  <div>
+    <span class="pill good">Require contract or LPO evidence before a review is published</span>
+    <span class="pill good">Contractor right-of-reply on every review before it goes live</span>
+    <span class="pill good">Seed demand side first — get 3 institutional clients before opening to public</span>
+    <span class="pill good">Frame as a benefit, not surveillance — verified contractors win more tenders</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+function sw(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

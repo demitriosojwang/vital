@@ -1,0 +1,403 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.tabs{display:flex;gap:8px;margin:0 0 20px;flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:var(--border-radius-lg);border:1.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:13px;cursor:pointer;font-weight:400}
+.tab.active{background:var(--color-background-primary);border-color:var(--color-border-primary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.sl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-tertiary);margin:0 0 12px}
+.idea-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:12px;overflow:hidden}
+.idea-head{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 16px;cursor:pointer;background:var(--color-background-secondary);gap:12px}
+.idea-head:hover{background:var(--color-background-primary)}
+.idea-meta{flex:1}
+.idea-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.idea-sub{font-size:12px;color:var(--color-text-tertiary);margin-top:2px}
+.idea-body{padding:14px 16px;border-top:0.5px solid var(--color-border-tertiary);display:none;font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.idea-body.open{display:block}
+.idea-body strong{color:var(--color-text-primary);font-weight:500}
+.idea-body p{margin:0 0 10px}.idea-body p:last-child{margin:0}
+.chevron{font-size:13px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0;margin-top:2px}
+.chevron.open{transform:rotate(180deg)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.b-now{background:#EAF3DE;color:#27500A}
+.b-phase2{background:#E6F1FB;color:#0C447C}
+.b-phase3{background:#EEEDFE;color:#3C3489}
+.b-later{background:#FAEEDA;color:#633806}
+.b-high{background:#EAF3DE;color:#27500A}
+.b-med{background:#FAEEDA;color:#633806}
+.b-low{background:#FAECE7;color:#712B13}
+.b-unique{background:#1a1a18;color:#e8e6df}
+.matrix-wrap{overflow-x:auto;margin-bottom:20px}
+.matrix{border-collapse:collapse;width:100%;min-width:480px;font-size:13px}
+.matrix th{text-align:left;padding:8px 12px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-tertiary);border-bottom:1.5px solid var(--color-border-tertiary)}
+.matrix td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;color:var(--color-text-secondary)}
+.matrix tr:last-child td{border-bottom:none}
+.matrix tr:hover td{background:var(--color-background-secondary)}
+.td-name{color:var(--color-text-primary);font-weight:500}
+.dot-row{display:flex;gap:3px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot-fill{background:#1D9E75}
+.dot-empty{background:var(--color-border-tertiary)}
+.info-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 16px;margin-bottom:16px;font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.info-box strong{color:var(--color-text-primary);font-weight:500}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:14px 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.col-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;background:var(--color-background-secondary)}
+.col-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-tertiary);margin-bottom:6px}
+.bullet{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--color-text-secondary);margin-bottom:6px;line-height:1.5}
+.bullet::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px;background:#1D9E75}
+.bullet.warn::before{background:#EF9F27}
+.moat-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.moat-row:last-child{border-bottom:none}
+.moat-name{min-width:180px;font-weight:500;color:var(--color-text-primary)}
+.moat-bar-wrap{flex:1;height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+.moat-bar{height:100%;border-radius:3px}
+.moat-label{font-size:11px;color:var(--color-text-tertiary);min-width:60px;text-align:right}
+</style>
+
+<h2 class="sr-only">What makes Wajenzi unique — differentiation opportunities</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="sw('biggest')">The big 3</button>
+  <button class="tab" onclick="sw('features')">Feature ideas</button>
+  <button class="tab" onclick="sw('matrix')">Impact matrix</button>
+  <button class="tab" onclick="sw('moat')">Defensibility</button>
+</div>
+
+<!-- THE BIG 3 -->
+<div class="panel active" id="p-biggest">
+  <div class="info-box">These are not just features — they are <strong>category-defining moves</strong>. Any one of them makes Wajenzi impossible to clone without also cloning years of data and relationships. All three together make it a genuinely different company.</div>
+
+  <div class="idea-card" style="border-color:#1D9E75">
+    <div class="idea-head" onclick="tog(this)" style="background:linear-gradient(135deg,rgba(29,158,117,.06),transparent)">
+      <div class="idea-meta">
+        <div class="idea-title" style="font-size:16px">1. Score the client, not just the contractor</div>
+        <div class="idea-sub">The most contrarian move in the market — and the one nobody has made</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge b-unique">Most unique</span>
+        <span class="chevron">▾</span>
+      </div>
+    </div>
+    <div class="idea-body open">
+      <p><strong>The insight:</strong> Contractors currently have zero information about clients before signing a contract. They don't know if a client pays late, issues endless variation orders, disputes legitimate claims, or abandons a project halfway. They're flying completely blind. No platform in Kenya — or East Africa — scores clients.</p>
+      <p><strong>What it looks like:</strong> Every procuring entity (developer, NGO, county government) gets a Client Profile. Contractors rate clients after project completion on: payment timeliness, scope creep frequency, site accessibility, fairness in dispute resolution, and variation order handling. Clients get a score. Clients with low scores pay a premium to attract contractors — or simply can't attract good ones at all.</p>
+      <p><strong>Why it's defensible:</strong> The moment contractors start checking client scores before bidding, you have supply-side lock-in. Contractors now have a reason to use the platform actively — not just react to being rated. You've turned a passive rating system into an active marketplace where both sides have skin in the game.</p>
+      <p><strong>The negotiating leverage this creates:</strong> A county government with a reputation score of 42 (known to delay payments by 6 months) needs your platform to improve that score before good contractors will bid on their tenders. You become a reputational infrastructure provider that both sides depend on — not just a directory one side uses to check on the other.</p>
+      <p><strong>Revenue angle:</strong> Organisations pay for "Client Profile" verification and can purchase "Reputation Boost" advisory (consulting on what's driving their low score and how to fix it). KES 50,000–200,000/engagement. New revenue stream from a completely different buyer.</p>
+    </div>
+  </div>
+
+  <div class="idea-card" style="border-color:#378ADD">
+    <div class="idea-head" onclick="tog(this)" style="background:linear-gradient(135deg,rgba(55,138,221,.06),transparent)">
+      <div class="idea-meta">
+        <div class="idea-title" style="font-size:16px">2. Milestone escrow — eliminate the #1 reason projects fail</div>
+        <div class="idea-sub">M-Pesa-native payment escrow tied to platform milestone confirmations</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge b-unique">Most impactful</span>
+        <span class="chevron">▾</span>
+      </div>
+    </div>
+    <div class="idea-body">
+      <p><strong>The problem it solves:</strong> The two biggest fears in Kenyan construction are (a) contractor abandons site with advance payment, and (b) client refuses to release payments after work is done. These fears drive up costs, kill small contractors, and make clients risk-averse. No platform addresses the underlying payment trust problem.</p>
+      <p><strong>What it looks like:</strong> Client deposits the full contract value into a Wajenzi-managed M-Pesa escrow account at contract signing. As each milestone is confirmed by both parties on the platform, the corresponding payment tranche is released automatically to the contractor. No milestone confirmed = no payment released = no contractor abandonment risk. No disputed work = no payment withheld risk.</p>
+      <p><strong>Why M-Pesa makes this uniquely possible in Kenya:</strong> Escrow in the US requires banks, lawyers, and weeks. In Kenya, M-Pesa's B2C API means you can move money instantly with a programmatic instruction. The infrastructure to do this already exists. Nobody has applied it to construction.</p>
+      <p><strong>The moat:</strong> Once a client has used escrow for one project and slept well, they will never go back to informal payment arrangements. The switching cost is the peace of mind. You become the trust layer for Kenyan construction finance.</p>
+      <p><strong>Revenue:</strong> 1–2% escrow fee on funds held. A KES 10M project held in escrow for 12 months at 1.5% = KES 150,000 from one project. At 20 projects/month that's KES 3M/month from escrow fees alone — entirely passive once the system is built. You also earn float on the held funds if structured correctly with a banking partner.</p>
+      <p><strong>Partnership needed:</strong> A Kenyan commercial bank (NCBA, Equity, KCB) as escrow holder. You are the platform, they hold the money. Their compliance infrastructure + your platform intelligence = a genuinely new product neither could build alone.</p>
+    </div>
+  </div>
+
+  <div class="idea-card" style="border-color:#7F77DD">
+    <div class="idea-head" onclick="tog(this)" style="background:linear-gradient(135deg,rgba(127,119,221,.06),transparent)">
+      <div class="idea-meta">
+        <div class="idea-title" style="font-size:16px">3. Diaspora construction marketplace</div>
+        <div class="idea-sub">5M+ Kenyans abroad spending billions building at home with zero visibility</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge b-unique">Biggest market gap</span>
+        <span class="chevron">▾</span>
+      </div>
+    </div>
+    <div class="idea-body">
+      <p><strong>The market:</strong> Kenya's diaspora sent home KES 650B+ in 2024. A significant portion goes into construction — houses, rentals, commercial buildings. These clients are in London, the US, Canada, the Gulf. They cannot visit the site. They cannot check on the contractor. They hire based on family recommendations and then watch their money disappear. This is one of the most underserved, highest-pain, highest-spending segments in East Africa.</p>
+      <p><strong>What the diaspora client needs that nobody provides:</strong> A contractor they can trust without being physically present. Verifiable credentials. Progress photos with timestamps and GPS tags. A platform that holds payment in escrow and releases it only on confirmed milestones. The ability to video-call the site from abroad. All of this in one product.</p>
+      <p><strong>Why Wajenzi is perfectly positioned:</strong> You already have everything except the diaspora-specific UI: verified contractors, milestone tracking, M-Pesa escrow, and document verification. You need to add GPS-tagged photo uploads, a diaspora client portal with timezone-aware notifications, and international payment rails (Stripe/Wise for GBP, USD, AED inflow).</p>
+      <p><strong>Distribution:</strong> Diaspora communities are intensely networked. One satisfied client in London tells 20 people in their community group. Target Kenyan church networks, WhatsApp investment groups, and YouTube channels that cater to diaspora audiences. The customer acquisition cost per diaspora client is low; their willingness to pay is very high.</p>
+      <p><strong>Revenue:</strong> Premium tier at KES 30,000–80,000/project for diaspora clients (vs KES 2,000 for a local search). Escrow fee on larger international transfers. Potential to build the "Wajenzi Diaspora" sub-brand as a distinct product.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE IDEAS -->
+<div class="panel" id="p-features">
+  <div class="sl">Ranked by uniqueness — click to expand</div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">AI contract risk scanner</div><div class="idea-sub">Upload any contract PDF — Claude flags dangerous clauses before signing</div></div>
+      <div class="badges"><span class="badge b-now">Phase 1</span><span class="badge b-high">High impact</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>A contractor or client uploads their draft contract. Claude reads it and flags: unusual liability caps, one-sided variation order clauses, ambiguous completion definitions, missing payment schedules, and clauses that have historically triggered disputes on the platform. Returns a plain-English risk report with specific clause references.</p>
+      <p><strong>Why it's powerful:</strong> Most SME contractors in Kenya cannot afford a lawyer to review every contract. This gives them access to expert-level contract intelligence for a fraction of the cost. It also feeds your dispute database — you learn which clauses cause the most problems and can update the AI model over time.</p>
+      <p><strong>Revenue:</strong> KES 3,000–8,000 per scan. Subscribers get 3 free scans/month. Builds brand as "the platform that protects contractors," not just rates them.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Contractor trajectory score</div><div class="idea-sub">Not just where they are — where they're going</div></div>
+      <div class="badges"><span class="badge b-now">Phase 1</span><span class="badge b-high">High impact</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>The composite score tells you a contractor's current quality. The trajectory score tells you the direction of travel. A contractor with a score of 62 but improving across their last 5 projects is a very different risk than one with 62 but declining. Plot the score trend over time and give it a label: Rising ↑, Stable →, Declining ↓.</p>
+      <p><strong>Why it matters for AGPO:</strong> New youth and women-owned contractors always start with low scores because they have few projects. The trajectory score gives them a way to demonstrate they are improving — which is the actual question a procurement officer needs to answer, not just "is their score above 60."</p>
+      <p><strong>Technical implementation:</strong> Linear regression over the last N project scores, weighted toward recency. Display as a sparkline on the profile card. One additional column in the score_history table.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Project-type DNA matching</div><div class="idea-sub">AI matches projects to contractors with the most relevant track record</div></div>
+      <div class="badges"><span class="badge b-phase2">Phase 2</span><span class="badge b-high">High impact</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>A contractor with a score of 78 on residential buildings is a different proposition from one with 78 on road construction. The current model scores overall — not by project type. DNA matching computes a per-project-type sub-score from only the reviews relevant to that type. When a client searches for a drainage contractor, they see scores computed only from drainage projects.</p>
+      <p><strong>Second use case — tender matching:</strong> When a new tender is published, the platform automatically identifies the top 10 most relevant contractors based on project-type match + location + capacity (project value handled) and notifies them. Contractors get relevant opportunities; procuring entities get a shortlist without advertising.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Construction price benchmarker</div><div class="idea-sub">Is this bid reasonable? Real market data, not guesswork</div></div>
+      <div class="badges"><span class="badge b-phase2">Phase 2</span><span class="badge b-high">High impact</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>Every project submitted to the platform has a contract value, project type, county, and scope. Aggregate this anonymously and you build the first real market price database for Kenyan construction. "What does a 3-bedroom house cost to build in Nakuru?" — nobody has reliable data on this. You will, within 12 months of platform activity.</p>
+      <p><strong>Product:</strong> Before accepting a bid, a client can run it through the benchmarker: "Bids for residential construction in Nakuru range from KES 28,000–45,000/sqm. Your bid of KES 22,000/sqm is 28% below market — investigate before proceeding." This directly complements the abnormal low bid detection in tenders.</p>
+      <p><strong>External revenue:</strong> Sell the aggregated market data (anonymised, county-level) to banks for loan underwriting, to the Kenya Bureau of Statistics for construction cost indices, and to developers for feasibility studies. KES 200,000–500,000 per data export. Completely passive once the database exists.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">GPS-tagged site photo verification</div><div class="idea-sub">Milestone photos that cannot be faked</div></div>
+      <div class="badges"><span class="badge b-phase2">Phase 2</span><span class="badge b-med">Medium effort</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>Milestone photos uploaded through the Wajenzi mobile app are automatically tagged with GPS coordinates and timestamp, then cross-checked against the registered project location. A photo taken 50km from the project site is flagged immediately. The photo cannot be submitted without an active GPS signal.</p>
+      <p><strong>Why this matters:</strong> The current failure mode of milestone tracking is contractors submitting old photos or photos from different sites. GPS tagging closes this loophole entirely and makes the milestone confirmation credible — which is what makes the escrow system trustworthy.</p>
+      <p><strong>Extra feature:</strong> AI analysis of the photo to confirm the claimed milestone makes sense. "Photo shows formwork in place — consistent with 'slab poured' milestone claim." Not a hard requirement but an additional confidence signal.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Sub-contractor network map</div><div class="idea-sub">Who actually does the work matters as much as who signs the contract</div></div>
+      <div class="badges"><span class="badge b-phase3">Phase 3</span><span class="badge b-high">High impact</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>Most NCA-registered main contractors sub-contract the bulk of actual work to smaller, unregistered firms. These sub-contractors are invisible — no NCA number, no profile, no track record. But they determine quality more than the main contractor does.</p>
+      <p>A lighter-weight sub-contractor profile (no NCA requirement) lets main contractors declare who they use for electrical, plumbing, steel, and finishing work. Sub-contractors build their own track record through contractor-submitted ratings. Over time you build a network map of who works for whom — a genuinely unique asset that banks, insurers, and large developers have never had access to.</p>
+      <p><strong>The emergent value:</strong> "Contractor A uses Sub-contractor B for all electrical work. Sub-contractor B has a 91 score across 40 projects. Therefore Contractor A's electrical work is likely to be high quality even though their composite score is 67." This kind of granularity doesn't exist anywhere.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Anonymous whistleblower + pattern detection</div><div class="idea-sub">Surfaces systemic fraud before individual victims can see it</div></div>
+      <div class="badges"><span class="badge b-phase3">Phase 3</span><span class="badge b-med">Medium effort</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>Anonymous fraud reports are held privately and never published. But when three independent anonymous reports describe the same contractor using the same pattern — submitting low bids then abandoning, or using substandard materials on government projects — the system flags it for investigation. No single report triggers action; pattern convergence does.</p>
+      <p><strong>Why this is uniquely powerful:</strong> In the current market, a contractor can defraud five different clients and each one thinks they're the only victim. Nobody shares information. The platform connects the dots that individual victims can't see. This is genuinely impossible to do without the data network the platform builds.</p>
+    </div>
+  </div>
+
+  <div class="idea-card">
+    <div class="idea-head" onclick="tog(this)">
+      <div class="idea-meta"><div class="idea-title">Climate project compliance tracker</div><div class="idea-sub">Green building + carbon reporting for climate-funded projects</div></div>
+      <div class="badges"><span class="badge b-phase3">Phase 3</span><span class="badge b-med">Medium effort</span><span class="chevron">▾</span></div>
+    </div>
+    <div class="idea-body">
+      <p>World Bank, GCF, USAID, and DFID-funded construction projects increasingly require environmental compliance reporting — green building standards, carbon footprint documentation, local material sourcing percentages. Currently this is done manually and inconsistently.</p>
+      <p>Add a "Climate project" flag to tenders that activates a compliance checklist: local materials %, energy efficiency rating, waste management plan, and a simplified carbon estimate. Contractors who complete climate projects build a green track record that qualifies them for future climate-funded work. You become the compliance infrastructure for Kenya's climate adaptation investment pipeline — which is billions of dollars.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MATRIX -->
+<div class="panel" id="p-matrix">
+  <div class="info-box">Rated on <strong>uniqueness</strong> (does anyone else do this?), <strong>revenue impact</strong> (how much money does it unlock?), and <strong>moat depth</strong> (how hard is it to copy after you've built it?).</div>
+
+  <div class="matrix-wrap">
+  <table class="matrix">
+    <thead><tr>
+      <th style="width:28%">Idea</th>
+      <th style="width:12%">Uniqueness</th>
+      <th style="width:12%">Revenue</th>
+      <th style="width:12%">Moat</th>
+      <th style="width:10%">Effort</th>
+      <th style="width:26%">Build when</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="td-name">Client scoring</td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 1 — add client review form alongside contractor review</td>
+      </tr>
+      <tr>
+        <td class="td-name">Milestone escrow</td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 2 — needs banking partner + legal structure first</td>
+      </tr>
+      <tr>
+        <td class="td-name">Diaspora marketplace</td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 2 — add international payment rails + GPS photos</td>
+      </tr>
+      <tr>
+        <td class="td-name">AI contract scanner</td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(1)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 1 — single Claude API call, build in a week</td>
+      </tr>
+      <tr>
+        <td class="td-name">Trajectory score</td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(1)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 1 — add to scoring engine, 2 days work</td>
+      </tr>
+      <tr>
+        <td class="td-name">Price benchmarker</td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 2 — needs 6 months of project data first</td>
+      </tr>
+      <tr>
+        <td class="td-name">Project-type DNA</td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 2 — once review volume warrants segmentation</td>
+      </tr>
+      <tr>
+        <td class="td-name">GPS photo verification</td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 2 — required for escrow to be credible</td>
+      </tr>
+      <tr>
+        <td class="td-name">Sub-contractor network</td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(5)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 3 — needs main contractor adoption first</td>
+      </tr>
+      <tr>
+        <td class="td-name">Climate compliance</td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 3 — requires climate-finance partnership</td>
+      </tr>
+      <tr>
+        <td class="td-name">Anonymous whistleblower</td>
+        <td><div class="dot-row">${dots(3)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td><div class="dot-row">${dots(4)}</div></td>
+        <td><div class="dot-row">${dots(2)}</div></td>
+        <td style="color:var(--color-text-secondary)">Phase 3 — needs review volume + legal framework</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-tertiary)">● = 1 point out of 5</div>
+</div>
+
+<!-- MOAT -->
+<div class="panel" id="p-moat">
+  <div class="info-box">A moat is what stops a well-funded competitor from copying you in 6 months. Features are not moats — they can be cloned. <strong>Data, relationships, and network effects</strong> are moats. Here is how each of your differentiators compounds over time.</div>
+
+  <div class="sl">Moat depth by asset — harder to replicate as the platform grows</div>
+
+  <div class="moat-row"><span class="moat-name">Contractor review database</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:95%;background:#1D9E75"></div></div><span class="moat-label">Very deep</span></div>
+  <div class="moat-row"><span class="moat-name">Client score database</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:95%;background:#1D9E75"></div></div><span class="moat-label">Very deep</span></div>
+  <div class="moat-row"><span class="moat-name">Construction price data</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:90%;background:#1D9E75"></div></div><span class="moat-label">Very deep</span></div>
+  <div class="moat-row"><span class="moat-name">Sub-contractor network map</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:90%;background:#1D9E75"></div></div><span class="moat-label">Very deep</span></div>
+  <div class="moat-row"><span class="moat-name">County government relationships</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:80%;background:#378ADD"></div></div><span class="moat-label">Deep</span></div>
+  <div class="moat-row"><span class="moat-name">Escrow banking partnership</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:80%;background:#378ADD"></div></div><span class="moat-label">Deep</span></div>
+  <div class="moat-row"><span class="moat-name">AGPO compliance data</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:75%;background:#378ADD"></div></div><span class="moat-label">Deep</span></div>
+  <div class="moat-row"><span class="moat-name">Diaspora community trust</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:70%;background:#EF9F27"></div></div><span class="moat-label">Medium</span></div>
+  <div class="moat-row"><span class="moat-name">AI contract scanner</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:40%;background:#E24B4A"></div></div><span class="moat-label">Shallow</span></div>
+  <div class="moat-row"><span class="moat-name">Platform features generally</span><div class="moat-bar-wrap"><div class="moat-bar" style="width:20%;background:#E24B4A"></div></div><span class="moat-label">Cloneable</span></div>
+
+  <div class="divider"></div>
+  <div class="sl">The compounding logic</div>
+
+  <div class="two-col">
+    <div class="col-card">
+      <div class="col-label">What a competitor faces in year 3</div>
+      <div class="bullet">3 years of contractor reviews they don't have</div>
+      <div class="bullet">Client scores built from real project data</div>
+      <div class="bullet">County government contracts that locked out competitors</div>
+      <div class="bullet">A price database that took 36 months to accumulate</div>
+      <div class="bullet">Network effects: contractors check client scores, clients check contractor scores — neither side can leave without losing the data advantage</div>
+    </div>
+    <div class="col-card">
+      <div class="col-label">What you need to build that moat</div>
+      <div class="bullet">Prioritise data collection over features</div>
+      <div class="bullet">Every project on the platform = more data = deeper moat</div>
+      <div class="bullet warn">Start client scoring in Phase 1, not Phase 3 — the earlier you collect it, the deeper the moat</div>
+      <div class="bullet warn">Escrow creates switching costs that pure rating platforms never achieve</div>
+      <div class="bullet">Lock in county partnerships with multi-year MOUs, not month-to-month</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dots(n){
+  return Array.from({length:5},(_,i)=>`<div class="dot ${i<n?'dot-fill':'dot-empty'}"></div>`).join('');
+}
+// Replace template literal in DOM
+document.querySelectorAll('td').forEach(td=>{
+  if(td.innerHTML.includes('${dots(')){
+    td.innerHTML=td.innerHTML.replace(/\$\{dots\((\d)\)\}/g,(_,n)=>dots(+n));
+  }
+});
+function sw(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function tog(head){
+  const body=head.nextElementSibling;
+  const chev=head.querySelector('.chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+</script>
