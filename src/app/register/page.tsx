@@ -31,6 +31,7 @@ const requiredDocs = [
   { type: 'nca_licence', label: 'NCA Registration Certificate', required: true },
   { type: 'insurance', label: 'Public Liability / Contractor All Risk Insurance', required: true },
   { type: 'tax_compliance', label: 'KRA iTax Compliance Certificate', required: true },
+  { type: 'completion_certificate', label: 'Project Completion Certificates (past projects)', required: false, description: 'Upload certificates from previously completed projects issued by clients. These serve as verified proof of your track record and directly boost your credibility score.' },
   { type: 'personnel_list', label: 'Certified Engineers & Technicians List', required: false },
   { type: 'financial_statements', label: 'Audited Financial Statements (2 years)', required: false },
   { type: 'crb_report', label: 'CRB Clearance Report', required: false },
@@ -220,17 +221,21 @@ export default function RegisterPage() {
               <span>In this demo, uploads are simulated. In production, documents go through automated + manual verification.</span>
             </div>
             {requiredDocs.map((doc) => (
-              <div key={doc.type} className="flex items-center gap-3 p-3 rounded-lg border">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted shrink-0">
-                  <FileText className="h-5 w-5 text-muted-foreground" />
+              <div key={doc.type} className={`flex items-start gap-3 p-3 rounded-lg border ${doc.type === 'completion_certificate' ? 'border-primary/30 bg-primary/5' : ''}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg shrink-0 ${doc.type === 'completion_certificate' ? 'bg-primary/15' : 'bg-muted'}`}>
+                  <FileText className={`h-5 w-5 ${doc.type === 'completion_certificate' ? 'text-primary' : 'text-muted-foreground'}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium flex items-center gap-2">
                     {doc.label}
                     {doc.required && <Badge variant="secondary" className="text-[10px] px-1.5">Required</Badge>}
+                    {doc.type === 'completion_certificate' && <Badge className="bg-primary/15 text-primary border-0 text-[10px] px-1.5">Proof of Work</Badge>}
                   </div>
+                  {'description' in doc && doc.description && (
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{doc.description}</p>
+                  )}
                 </div>
-                <Button variant="outline" size="sm" className="shrink-0">
+                <Button variant="outline" size="sm" className="shrink-0 mt-0.5">
                   <Upload className="h-3.5 w-3.5 mr-1" /> Upload
                 </Button>
               </div>

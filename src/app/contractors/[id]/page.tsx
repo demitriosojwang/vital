@@ -17,13 +17,14 @@ import { ScoreBar } from '@/components/score/score-bar';
 import {
   ArrowLeft, Building2, MapPin, Shield, CheckCircle2, Star, Clock,
   FileText, AlertTriangle, CreditCard, ExternalLink, User, Mail, Phone,
-  Globe, Calendar, TrendingUp, XCircle,
+  Globe, Calendar, TrendingUp, XCircle, Award, FolderOpen,
 } from 'lucide-react';
 
 interface Project {
   id: string; title: string; projectType: string; county: string;
   contractValue: number; startDate: string | null; endDate: string | null;
   actualEnd: string | null; status: string; description: string | null;
+  completionCertificate: string | null;
   client: { companyName: string | null; clientType: string } | null;
 }
 
@@ -94,6 +95,7 @@ function DocTypeLabel(type: string) {
   const map: Record<string, string> = {
     nca_licence: 'NCA Licence', insurance: 'Insurance', tax_compliance: 'Tax Compliance',
     personnel_list: 'Personnel List', crb_report: 'CRB Report', financial_statements: 'Financial Statements',
+    completion_certificate: 'Completion Certificate',
   };
   return map[type] || type;
 }
@@ -243,6 +245,42 @@ export default function ContractorDetailPage() {
 
             {/* Projects Tab */}
             <TabsContent value="projects">
+              {/* Completion Certificates Summary */}
+              {(() => {
+                const projectsWithCert = contractor.projects.filter((p) => p.completionCertificate);
+                const completedProjects = contractor.projects.filter((p) => p.status === 'completed');
+                if (completedProjects.length > 0) {
+                  return (
+                    <div className="mb-4 p-4 rounded-lg border border-primary/20 bg-primary/5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Award className="h-4 w-4 text-primary" />
+                        <span className="font-semibold text-sm">Completion Certificates as Proof</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Completion certificates are issued by clients upon project handover and serve as the strongest proof of a contractor&apos;s delivered work. Verified certificates are cross-referenced with the issuing client.
+                      </p>
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Projects Completed: </span>
+                          <span className="font-semibold">{completedProjects.length}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">With Certificate: </span>
+                          <span className="font-semibold text-primary">{projectsWithCert.length}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Certification Rate: </span>
+                          <span className={`font-semibold ${projectsWithCert.length === completedProjects.length ? 'text-green-600' : 'text-yellow-600'}`}>
+                            {completedProjects.length > 0 ? Math.round((projectsWithCert.length / completedProjects.length) * 100) : 0}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               <Card>
                 <CardContent className="p-0">
                   {contractor.projects.length === 0 ? (
@@ -255,6 +293,7 @@ export default function ContractorDetailPage() {
                           <TableHead className="hidden md:table-cell">Type</TableHead>
                           <TableHead className="hidden sm:table-cell">Value</TableHead>
                           <TableHead>Status</TableHead>
+                          <TableHead className="hidden sm:table-cell">Certificate</TableHead>
                           <TableHead className="hidden lg:table-cell">End Date</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -268,6 +307,18 @@ export default function ContractorDetailPage() {
                             <TableCell className="hidden md:table-cell text-sm">{ProjectTypeLabel(p.projectType)}</TableCell>
                             <TableCell className="hidden sm:table-cell text-sm font-medium">{formatKES(p.contractValue)}</TableCell>
                             <TableCell><StatusBadge status={p.status} /></TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              {p.completionCertificate ? (
+                                <div className="flex items-center gap-1.5 text-green-700 dark:text-green-400">
+                                  <Award className="h-3.5 w-3.5" />
+                                  <span className="text-xs font-medium">{p.completionCertificate}</span>
+                                </div>
+                              ) : p.status === 'completed' ? (
+                                <span className="text-xs text-yellow-600 flex items-center gap-1"><XCircle className="h-3 w-3" /> Not uploaded</span>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">N/A</span>
+                              )}
+                            </TableCell>
                             <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{formatDate(p.actualEnd || p.endDate)}</TableCell>
                           </TableRow>
                         ))}
@@ -337,32 +388,71 @@ export default function ContractorDetailPage() {
 
             {/* Documents Tab */}
             <TabsContent value="documents">
-              <Card>
-                <CardContent className="p-0">
-                  {contractor.documents.length === 0 ? (
-                    <div className="p-8 text-center text-muted-foreground">No documents uploaded.</div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Document</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="hidden sm:table-cell">Expiry</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {contractor.documents.map((d) => (
-                          <TableRow key={d.id}>
-                            <TableCell className="font-medium text-sm">{d.docName}</TableCell>
-                            <TableCell className="text-sm text-muted-foreground">{DocTypeLabel(d.docType)}</TableCell>
-                            <TableCell><StatusBadge status={d.status} /></TableCell>
-                            <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{formatDate(d.expiryDate)}</TableCell>
-                          </TableRow>
+              {/* Completion Certificates Section */}
+              {(() => {
+                const certs = contractor.documents.filter((d) => d.docType === 'completion_certificate');
+                if (certs.length > 0) {
+                  return (
+                    <div className="mb-4 p-4 rounded-lg border border-primary/20 bg-primary/5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Award className="h-4 w-4 text-primary" />
+                        <span className="font-semibold text-sm">Completion Certificates</span>
+                        <Badge className="bg-primary/15 text-primary border-0 text-[10px] px-1.5 ml-auto">{certs.length} on file</Badge>
+                      </div>
+                      <div className="space-y-2">
+                        {certs.map((c) => (
+                          <div key={c.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-background border">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/20 shrink-0">
+                              <Award className="h-4 w-4 text-green-700 dark:text-green-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium">{c.docName}</div>
+                              {c.expiryDate && <div className="text-xs text-muted-foreground">Issued: {formatDate(c.uploadDate)}</div>}
+                            </div>
+                            <StatusBadge status={c.status} />
+                          </div>
                         ))}
-                      </TableBody>
-                    </Table>
-                  )}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
+              {/* All Other Documents */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2"><FolderOpen className="h-4 w-4" /> Verification Documents</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {(() => {
+                    const otherDocs = contractor.documents.filter((d) => d.docType !== 'completion_certificate');
+                    if (otherDocs.length === 0) {
+                      return <div className="p-8 text-center text-muted-foreground">No verification documents uploaded.</div>;
+                    }
+                    return (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Document</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="hidden sm:table-cell">Expiry</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {otherDocs.map((d) => (
+                            <TableRow key={d.id}>
+                              <TableCell className="font-medium text-sm">{d.docName}</TableCell>
+                              <TableCell className="text-sm text-muted-foreground">{DocTypeLabel(d.docType)}</TableCell>
+                              <TableCell><StatusBadge status={d.status} /></TableCell>
+                              <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{formatDate(d.expiryDate)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    );
+                  })()}
                 </CardContent>
               </Card>
             </TabsContent>

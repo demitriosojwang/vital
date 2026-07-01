@@ -14,7 +14,7 @@ const features = [
   {
     icon: Shield,
     title: 'NCA & Document Verification',
-    description: 'Real-time verification of NCA licences, insurance certificates, KRA tax compliance, and CRB status. Our document vault keeps everything auditable and up-to-date.',
+    description: 'Real-time verification of NCA licences, insurance, KRA tax compliance, CRB status, and project completion certificates. Our document vault keeps everything auditable and up-to-date, with completion certificates serving as the strongest proof of delivered work.',
     color: 'text-primary',
     bg: 'bg-primary/10',
   },

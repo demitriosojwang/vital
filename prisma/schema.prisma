@@ -83,6 +83,7 @@ model Project {
   status        String    @default("active")
   county        String?
   description   String?
+  completionCertificate String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
