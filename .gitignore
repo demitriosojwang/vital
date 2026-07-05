@@ -32,9 +32,23 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# database
+/db/
+*.db
 
 # vercel
 .vercel
+
+# infra / temp
+.zscripts/
+tool-results/
+upload/
+worklog.md
+examples/
+Caddyfile
+mini-services/
 
 
 # typescript
