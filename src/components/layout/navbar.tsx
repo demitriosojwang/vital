@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Shield, Search, UserPlus, LayoutDashboard } from 'lucide-react';
+import { Menu, Shield, Search, UserPlus, LayoutDashboard, Eye } from 'lucide-react';
 
 const navLinks = [
   { href: '/contractors', label: 'Find Contractors', icon: Search },
+  { href: '/clients', label: 'Vet Clients', icon: Eye },
   { href: '/register', label: 'Register as Contractor', icon: UserPlus },
   { href: '/disputes', label: 'Dispute Registry', icon: Shield },
   { href: '/admin', label: 'Admin Panel', icon: LayoutDashboard },

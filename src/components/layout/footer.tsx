@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Shield, Mail, Phone, MapPin } from 'lucide-react';
+import { Shield, Mail, Phone, MapPin, Eye } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
@@ -24,6 +24,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Platform</h3>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li><Link href="/contractors" className="hover:text-primary-foreground transition-colors">Find Contractors</Link></li>
+              <li><Link href="/clients" className="hover:text-primary-foreground transition-colors">Vet Clients</Link></li>
               <li><Link href="/register" className="hover:text-primary-foreground transition-colors">Register as Contractor</Link></li>
               <li><Link href="/disputes" className="hover:text-primary-foreground transition-colors">Dispute Registry</Link></li>
               <li><Link href="/projects" className="hover:text-primary-foreground transition-colors">Track Projects</Link></li>

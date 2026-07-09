@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   Shield, Search, Star, Clock, CheckCircle2, AlertTriangle,
   Users, MapPin, TrendingUp, Smartphone, Lock, Globe,
-  ArrowRight, Building2, FileCheck, Scale, Eye
+  ArrowRight, Building2, FileCheck, Scale, Eye, MessageSquare, CreditCard,
 } from 'lucide-react';
 
 const features = [
@@ -31,6 +31,13 @@ const features = [
     description: 'Anonymous whistleblower protection, formal dispute filing, and a transparent blacklist registry. Hold contractors accountable with documented evidence trails.',
     color: 'text-chart-3',
     bg: 'bg-chart-3/10',
+  },
+  {
+    icon: Eye,
+    title: 'Client Scoring — First in Africa',
+    description: 'Contractors rate clients on payment timeliness, scope creep, site accessibility, dispute fairness, and variation handling. Clients with low scores pay a premium — or can\'t attract good contractors.',
+    color: 'text-purple-600 dark:text-purple-400',
+    bg: 'bg-purple-100 dark:bg-purple-900/20',
   },
   {
     icon: MapPin,
@@ -58,8 +65,8 @@ const features = [
 const stats = [
   { label: 'Verified Contractors', value: '847', icon: Building2 },
   { label: 'Projects Tracked', value: '3,200+', icon: FileCheck },
-  { label: 'Reviews Submitted', value: '12,500+', icon: Star },
-  { label: 'Counties Covered', value: '42', icon: MapPin },
+  { label: 'Client Reviews', value: '4,800+', icon: MessageSquare },
+  { label: 'Clients Scored', value: '230+', icon: Eye },
 ];
 
 const scoreDimensions = [
@@ -231,9 +238,9 @@ export default function Home() {
                 icon: TrendingUp,
               },
               {
-                title: 'Kenyan Diaspora',
-                desc: 'Building at home from abroad? Find trusted contractors, monitor progress via GPS-verified photos, and protect payments through M-Pesa escrow. Build with confidence.',
-                icon: Globe,
+                title: 'Contractors',
+                desc: 'Vet clients before signing. See payment histories, scope creep patterns, and dispute records. Know who pays on time and who will drain your cash flow. No more flying blind.',
+                icon: Eye,
               },
             ].map((item) => (
               <Card key={item.title} className="text-center">
@@ -264,6 +271,12 @@ export default function Home() {
               <Button size="lg" className="bg-kenya-gold hover:bg-kenya-gold/90 text-black font-semibold px-8">
                 <Search className="h-5 w-5 mr-2" />
                 Search Contractors
+              </Button>
+            </Link>
+            <Link href="/clients">
+              <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 px-8">
+                <Eye className="h-4 w-4 mr-2" />
+                Vet a Client
               </Button>
             </Link>
             <Link href="/register">

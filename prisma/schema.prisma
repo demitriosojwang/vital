@@ -19,6 +19,7 @@ model User {
   contractorProfile ContractorProfile?
   clientProfile    ClientProfile?
   reviews          Review[]
+  clientReviews    ClientReview[]
 }
 
 model ContractorProfile {
@@ -63,16 +64,25 @@ model ContractorProfile {
 }
 
 model ClientProfile {
-  id             String   @id @default(cuid())
-  userId         String   @unique
-  companyName    String?
-  clientType     String   @default("individual")
-  compositeScore Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  companyName        String?
+  clientType         String   @default("individual")
+  compositeScore     Int      @default(0)
+  paymentScore       Int      @default(0)
+  scopeCreepScore    Int      @default(0)
+  siteAccessScore    Int      @default(0)
+  disputeFairScore   Int      @default(0)
+  variationScore     Int      @default(0)
+  totalProjectValue  Int      @default(0)
+  isBlacklisted      Boolean  @default(false)
+  blacklistReason    String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  user      User      @relation(fields: [userId], references: [id])
-  projects  Project[]
+  user           User           @relation(fields: [userId], references: [id])
+  projects       Project[]
+  clientReviews  ClientReview[]
 }
 
 model Project {
@@ -91,11 +101,12 @@ model Project {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  contractor ContractorProfile @relation(fields: [contractorId], references: [id])
-  client      ClientProfile?    @relation(fields: [clientId], references: [id])
-  reviews     Review[]
-  milestones  Milestone[]
-  lpos        LocalPurchaseOrder[]
+  contractor    ContractorProfile @relation(fields: [contractorId], references: [id])
+  client        ClientProfile?    @relation(fields: [clientId], references: [id])
+  reviews       Review[]
+  clientReviews ClientReview[]
+  milestones    Milestone[]
+  lpos          LocalPurchaseOrder[]
 }
 
 model Review {
@@ -170,6 +181,28 @@ model Payment {
   status    String   @default("pending")
   mpesaRef  String?
   createdAt DateTime @default(now())
+}
+
+model ClientReview {
+  id               String   @id @default(cuid())
+  projectId        String
+  clientId          String
+  reviewerId        String
+  reviewerName      String
+  paymentRating     Int
+  scopeCreepRating  Int
+  siteAccessRating  Int
+  disputeFairRating Int
+  variationRating   Int
+  overallComment    String?
+  status            String   @default("pending")
+  clientReply       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  project  Project       @relation(fields: [projectId], references: [id])
+  client   ClientProfile @relation(fields: [clientId], references: [id])
+  reviewer User         @relation(fields: [reviewerId], references: [id])
 }
 
 model LocalPurchaseOrder {

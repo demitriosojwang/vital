@@ -24,9 +24,9 @@ async function seed() {
   ]);
 
   const clients = await Promise.all([
-    db.clientProfile.create({ data: { userId: users[5].id, companyName: 'Kiambu County Government', clientType: 'county', compositeScore: 72 } }),
-    db.clientProfile.create({ data: { userId: users[6].id, companyName: 'Unity Homes Ltd', clientType: 'developer', compositeScore: 85 } }),
-    db.clientProfile.create({ data: { userId: users[7].id, companyName: 'Nairobi County Government', clientType: 'county', compositeScore: 68 } }),
+    db.clientProfile.create({ data: { userId: users[5].id, companyName: 'Kiambu County Government', clientType: 'county', compositeScore: 72, paymentScore: 65, scopeCreepScore: 78, siteAccessScore: 82, disputeFairScore: 60, variationScore: 74, totalProjectValue: 62900000 } }),
+    db.clientProfile.create({ data: { userId: users[6].id, companyName: 'Unity Homes Ltd', clientType: 'developer', compositeScore: 85, paymentScore: 90, scopeCreepScore: 70, siteAccessScore: 88, disputeFairScore: 92, variationScore: 82, totalProjectValue: 206500000 } }),
+    db.clientProfile.create({ data: { userId: users[7].id, companyName: 'Nairobi County Government', clientType: 'county', compositeScore: 68, paymentScore: 58, scopeCreepScore: 65, siteAccessScore: 75, disputeFairScore: 62, variationScore: 78, totalProjectValue: 85300000 } }),
   ]);
 
   const projects = await Promise.all([
@@ -104,6 +104,28 @@ async function seed() {
     db.localPurchaseOrder.create({ data: { contractorId: contractors[3].id, lpoNumber: 'LPO/NCG/2023/0567', issuingOrg: 'Nairobi County Government', scopeOfWorks: 'Construction of 5 modular health clinics across Nairobi sub-counties', lpoValue: 45000000, issuedDate: new Date('2022-12-15'), validUntil: new Date('2024-01-31'), projectId: projects[7].id, status: 'fully_utilized', utilizationPct: 100 } }),
     db.localPurchaseOrder.create({ data: { contractorId: contractors[3].id, lpoNumber: 'LPO/UHL/2023/0345', issuingOrg: 'Unity Homes Ltd', scopeOfWorks: 'Grade A commercial office tower - 12 floors with basement parking', lpoValue: 180000000, issuedDate: new Date('2023-05-10'), validUntil: new Date('2025-06-30'), projectId: projects[6].id, status: 'active', utilizationPct: 65 } }),
     db.localPurchaseOrder.create({ data: { contractorId: contractors[4].id, lpoNumber: 'LPO/KCG/2024/0234', issuingOrg: 'Kiambu County Government', scopeOfWorks: 'Water supply extension to Kisumu East sub-county - Phase 2', lpoValue: 22000000, issuedDate: new Date('2024-03-15'), validUntil: new Date('2025-03-31'), projectId: projects[8].id, status: 'active', utilizationPct: 55 } }),
+  ]);
+
+  // Client Reviews (contractors rating clients)
+  await Promise.all([
+    // Juma Mbeki rating Kiambu County
+    db.clientReview.create({ data: { projectId: projects[0].id, clientId: clients[0].id, reviewerId: users[0].id, reviewerName: 'Juma Mbeki Construction Ltd', paymentRating: 70, scopeCreepRating: 80, siteAccessRating: 85, disputeFairRating: 55, variationRating: 72, overallComment: 'Kiambu County generally provided clear scope documents and good site access. Payment was delayed by 2-3 weeks on multiple occasions, which strained cash flow. The dispute over drainage specs could have been handled more fairly through formal variation instead of verbal instructions.', status: 'published' } }),
+    // Juma Mbeki rating Unity Homes
+    db.clientReview.create({ data: { projectId: projects[1].id, clientId: clients[1].id, reviewerId: users[0].id, reviewerName: 'Juma Mbeki Construction Ltd', paymentRating: 88, scopeCreepRating: 65, siteAccessRating: 90, disputeFairRating: 95, variationRating: 78, overallComment: 'Unity Homes pays on time and their sites are well-organized with clear access. However, they requested several scope changes mid-construction (additional parking bays, upgraded kitchen finishings) without proper variation orders initially. Fair dispute resolution when issues arose.', status: 'published' } }),
+    // Juma Mbeki rating Nairobi County
+    db.clientReview.create({ data: { projectId: projects[2].id, clientId: clients[2].id, reviewerId: users[0].id, reviewerName: 'Juma Mbeki Construction Ltd', paymentRating: 52, scopeCreepRating: 60, siteAccessRating: 70, disputeFairRating: 45, variationRating: 75, overallComment: 'Payment from Nairobi County was consistently late — 45+ days past due on two occasions. Site access was restricted by county traffic department causing delays. The dispute resolution process was biased against the contractor. Variation orders were handled relatively well through their formal system.', status: 'published' } }),
+    // Savanna rating Nairobi County
+    db.clientReview.create({ data: { projectId: projects[3].id, clientId: clients[2].id, reviewerId: users[1].id, reviewerName: 'Savanna Civil Works', paymentRating: 62, scopeCreepRating: 70, siteAccessRating: 78, disputeFairRating: 70, variationRating: 80, overallComment: 'Nairobi County was a fair client overall. Payments were sometimes delayed but eventually came through. The scope was clearly defined for this drainage project. Their formal variation order system is one of the better ones we have worked with.', status: 'published' } }),
+    // Savanna rating Kiambu County
+    db.clientReview.create({ data: { projectId: projects[4].id, clientId: clients[0].id, reviewerId: users[1].id, reviewerName: 'Savanna Civil Works', paymentRating: 68, scopeCreepRating: 78, siteAccessRating: 82, disputeFairRating: 65, variationRating: 76, overallComment: 'Kiambu County provides good site access and clear project briefs. Mid-project scope additions for pedestrian walkways were managed through proper variation. Payment timing could improve but is within acceptable range for county government.', status: 'published' } }),
+    // Redstone rating Unity Homes
+    db.clientReview.create({ data: { projectId: projects[5].id, clientId: clients[1].id, reviewerId: users[2].id, reviewerName: 'Redstone Contractors Ltd', paymentRating: 92, scopeCreepRating: 75, siteAccessRating: 85, disputeFairRating: 88, variationRating: 85, overallComment: 'Unity Homes is one of the better developer clients. They pay promptly and their project managers are responsive. Some scope creep on the townhouse finishings but it was formalized. Fair in dispute handling. Would work with them again if terms improved.', status: 'published' } }),
+    // Meridian rating Unity Homes
+    db.clientReview.create({ data: { projectId: projects[6].id, clientId: clients[1].id, reviewerId: users[3].id, reviewerName: 'Meridian Builders', paymentRating: 90, scopeCreepRating: 68, siteAccessRating: 90, disputeFairRating: 92, variationRating: 82, overallComment: 'Unity Homes has been our best repeat client. Payments are consistently within 14 days of invoice. Excellent site access and logistics support. Some scope additions on the helipad and rooftop garden were requested but handled through formal variation. Professional dispute resolution approach.', status: 'published' } }),
+    // Meridian rating Nairobi County
+    db.clientReview.create({ data: { projectId: projects[7].id, clientId: clients[2].id, reviewerId: users[3].id, reviewerName: 'Meridian Builders', paymentRating: 55, scopeCreepRating: 60, siteAccessRating: 72, disputeFairRating: 58, variationRating: 76, overallComment: 'Nairobi County payments are the slowest of any client we work with — often 60+ days. However, the clinic project scope was well-defined and variation orders were properly documented. Site access was challenging in some sub-county locations. Dispute process leans towards the county.', status: 'published' } }),
+    // Apex rating Kiambu County
+    db.clientReview.create({ data: { projectId: projects[8].id, clientId: clients[0].id, reviewerId: users[4].id, reviewerName: 'Apex Infrastructure', paymentRating: 65, scopeCreepRating: 82, siteAccessRating: 80, disputeFairRating: 60, variationRating: 72, overallComment: 'Kiambu County was clear on the water supply scope and provided good access to installation sites. Payment cycle is standard for government — 30-45 days. Could improve dispute fairness. Overall a reasonable county client to work with.', status: 'published' } }),
   ]);
 
   console.log('Database seeded successfully!');
