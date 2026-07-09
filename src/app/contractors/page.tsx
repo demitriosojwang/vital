@@ -41,6 +41,7 @@ import {
   FileCheck,
   Briefcase,
   TrendingUp,
+  Flag,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -64,6 +65,9 @@ interface Contractor {
   isPremium: boolean;
   crbStatus: string;
   itaxCompliant: boolean;
+  agpoNumber: string | null;
+  agpoCategory: string | null;
+  agpoVerified: boolean;
   totalProjectValue: number;
   _count: ContractorCount;
 }
@@ -100,12 +104,14 @@ function buildParams(filters: {
   county: string;
   category: string;
   minScore: number;
+  agpo: string;
 }): string {
   const params = new URLSearchParams();
   if (filters.query) params.set('q', filters.query);
   if (filters.county) params.set('county', filters.county);
   if (filters.category) params.set('type', filters.category);
   if (filters.minScore > 0) params.set('minScore', String(filters.minScore));
+  if (filters.agpo) params.set('agpo', filters.agpo);
   return params.toString();
 }
 
@@ -120,12 +126,12 @@ function FilterSidebar({
   onReset,
 }: {
   counties: string[];
-  filters: { query: string; county: string; category: string; minScore: number };
+  filters: { query: string; county: string; category: string; minScore: number; agpo: string };
   onChange: (f: typeof filters) => void;
   onReset: () => void;
 }) {
   const hasActiveFilters =
-    filters.query || filters.county || filters.category || filters.minScore > 0;
+    filters.query || filters.county || filters.category || filters.minScore > 0 || filters.agpo;
 
   return (
     <div className="space-y-6">
@@ -191,6 +197,30 @@ function FilterSidebar({
         </Select>
       </div>
 
+      {/* AGPO Filter */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">
+          AGPO Status
+        </label>
+        <Select
+          value={filters.agpo}
+          onValueChange={(v) =>
+            onChange({ ...filters, agpo: v === '__all__' ? '' : v })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="All contractors" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">All contractors</SelectItem>
+            <SelectItem value="yes">AGPO Registered (Any)</SelectItem>
+            <SelectItem value="youth">AGPO - Youth</SelectItem>
+            <SelectItem value="women">AGPO - Women</SelectItem>
+            <SelectItem value="pwd">AGPO - PWD</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Minimum Score Slider */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -246,6 +276,8 @@ function ContractorCard({ contractor }: { contractor: Contractor }) {
     isPremium,
     crbStatus,
     itaxCompliant,
+    agpoNumber,
+    agpoCategory,
     totalProjectValue,
     _count,
   } = contractor;
@@ -337,6 +369,15 @@ function ContractorCard({ contractor }: { contractor: Contractor }) {
                   >
                     <FileCheck className="size-3" />
                     iTax Compliant
+                  </Badge>
+                )}
+                {agpoNumber && (
+                  <Badge
+                    variant="outline"
+                    className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 text-[11px]"
+                  >
+                    <Flag className="size-3" />
+                    AGPO{agpoCategory ? ` (${agpoCategory})` : ''}
                   </Badge>
                 )}
               </div>
@@ -446,6 +487,7 @@ export default function ContractorsPage() {
     county: '',
     category: '',
     minScore: 0,
+    agpo: '',
   });
 
   /* ---- Data fetching ---- */
@@ -466,7 +508,7 @@ export default function ContractorsPage() {
     } finally {
       setLoading(false);
     }
-  }, [filters.query, filters.county, filters.category, filters.minScore]);
+  }, [filters.query, filters.county, filters.category, filters.minScore, filters.agpo]);
 
   useEffect(() => {
     fetchData();
@@ -487,7 +529,7 @@ export default function ContractorsPage() {
   };
 
   const handleReset = () => {
-    setFilters({ query: '', county: '', category: '', minScore: 0 });
+    setFilters({ query: '', county: '', category: '', minScore: 0, agpo: '' });
   };
 
   // Count active filters for badge
@@ -496,6 +538,7 @@ export default function ContractorsPage() {
     filters.county,
     filters.category,
     filters.minScore > 0,
+    filters.agpo,
   ].filter(Boolean).length;
 
   return (

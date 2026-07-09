@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import {
   LayoutDashboard, Users, Star, AlertTriangle, FileText, CreditCard,
-  CheckCircle2, XCircle, Clock, Eye, Building2, Shield, Ban,
+  CheckCircle2, XCircle, Clock, Eye, Building2, Shield, Ban, Flag, FileCheck,
 } from 'lucide-react';
 
 interface Stats {
@@ -43,6 +43,14 @@ interface Payment {
   mpesaRef: string | null; createdAt: string;
 }
 
+interface LPO {
+  id: string; lpoNumber: string; issuingOrg: string;
+  lpoValue: number; status: string; utilizationPct: number;
+  issuedDate: string | null; validUntil: string | null;
+  contractor: { companyName: string; ncaNumber: string | null } | null;
+  project: { title: string } | null;
+}
+
 function formatKES(amount: number): string {
   if (amount >= 1_000_000_000) return `KES ${(amount / 1_000_000_000).toFixed(1)}B`;
   if (amount >= 1_000_000) return `KES ${(amount / 1_000_000).toFixed(1)}M`;
@@ -55,6 +63,7 @@ export default function AdminPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [lpos, setLpos] = useState<LPO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,8 +72,9 @@ export default function AdminPage() {
       fetch('/api/reviews').then((r) => r.json()),
       fetch('/api/disputes').then((r) => r.json()),
       fetch('/api/payments').then((r) => r.json()),
-    ]).then(([s, r, d, p]) => {
-      setStats(s); setReviews(r); setDisputes(d); setPayments(p);
+      fetch('/api/lpos').then((r) => r.json()),
+    ]).then(([s, r, d, p, l]) => {
+      setStats(s); setReviews(r); setDisputes(d); setPayments(p); setLpos(l);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
@@ -120,9 +130,10 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="reviews">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="reviews">Pending Reviews ({pendingReviews.length})</TabsTrigger>
           <TabsTrigger value="disputes">Disputes ({disputes.filter((d) => d.status !== 'resolved').length})</TabsTrigger>
+          <TabsTrigger value="lpos">LPOs ({lpos.length})</TabsTrigger>
           <TabsTrigger value="payments">Payments ({payments.length})</TabsTrigger>
           <TabsTrigger value="actions">Quick Actions</TabsTrigger>
         </TabsList>
@@ -227,6 +238,66 @@ export default function AdminPage() {
           </Card>
         </TabsContent>
 
+        {/* LPOs Tab */}
+        <TabsContent value="lpos">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2"><FileCheck className="h-4 w-4" /> Local Purchase Orders</CardTitle>
+              <CardDescription>Track all LPOs issued to contractors on the platform.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {lpos.length === 0 ? (
+                <div className="p-8 text-center text-muted-foreground">No LPOs on record.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>LPO Number</TableHead>
+                      <TableHead>Contractor</TableHead>
+                      <TableHead className="hidden md:table-cell">Issuing Org</TableHead>
+                      <TableHead className="hidden lg:table-cell">Project</TableHead>
+                      <TableHead>Value</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden sm:table-cell">Utilization</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {lpos.map((l) => (
+                      <TableRow key={l.id}>
+                        <TableCell className="font-mono text-xs">{l.lpoNumber}</TableCell>
+                        <TableCell className="text-sm font-medium">{l.contractor?.companyName || '-'}</TableCell>
+                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{l.issuingOrg}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{l.project?.title || '-'}</TableCell>
+                        <TableCell className="text-sm font-medium">{formatKES(l.lpoValue)}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={
+                            l.status === 'fully_utilized' ? 'bg-green-100 text-green-800' :
+                            l.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                            l.status === 'expired' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                          }>
+                            {l.status === 'fully_utilized' ? 'Fully Utilized' : l.status === 'active' ? 'Active' : l.status.charAt(0).toUpperCase() + l.status.slice(1).replace(/_/g, ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${l.utilizationPct >= 90 ? 'bg-green-500' : l.utilizationPct >= 50 ? 'bg-yellow-500' : 'bg-blue-500'}`}
+                                style={{ width: `${l.utilizationPct}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground">{l.utilizationPct}%</span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Payments Tab */}
         <TabsContent value="payments">
           <Card>
@@ -313,6 +384,28 @@ export default function AdminPage() {
                 <div>
                   <h3 className="font-semibold">Payment Reconciliation</h3>
                   <p className="text-sm text-muted-foreground">Reconcile M-Pesa transactions and resolve pending payments</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900/20">
+                  <Flag className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Verify AGPO Registrations</h3>
+                  <p className="text-sm text-muted-foreground">Verify contractor AGPO numbers against the official portal</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/20">
+                  <FileCheck className="h-6 w-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Manage LPOs</h3>
+                  <p className="text-sm text-muted-foreground">Create, update, and track Local Purchase Orders</p>
                 </div>
               </CardContent>
             </Card>

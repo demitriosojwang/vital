@@ -17,7 +17,7 @@ import { ScoreBar } from '@/components/score/score-bar';
 import {
   ArrowLeft, Building2, MapPin, Shield, CheckCircle2, Star, Clock,
   FileText, AlertTriangle, CreditCard, ExternalLink, User, Mail, Phone,
-  Globe, Calendar, TrendingUp, XCircle,
+  Globe, Calendar, TrendingUp, XCircle, Flag, FileCheck,
 } from 'lucide-react';
 
 interface Project {
@@ -45,6 +45,14 @@ interface Document {
   uploadDate: string; expiryDate: string | null;
 }
 
+interface LPO {
+  id: string; lpoNumber: string; issuingOrg: string;
+  scopeOfWorks: string | null; lpoValue: number;
+  issuedDate: string | null; validUntil: string | null;
+  projectId: string | null; status: string; utilizationPct: number;
+  notes: string | null;
+}
+
 interface Contractor {
   id: string; companyName: string; ncaNumber: string | null;
   ncaCategory: string | null; businessPin: string | null;
@@ -55,11 +63,14 @@ interface Contractor {
   subPayScore: number; responsiveScore: number; disputeScore: number;
   totalProjectValue: number; crbStatus: string; itaxCompliant: boolean;
   isBlacklisted: boolean; blacklistReason: string | null;
+  agpoNumber: string | null; agpoCategory: string | null;
+  agpoVerified: boolean; agpoExpiry: string | null;
   user: { name: string; email: string; phone: string | null };
   projects: Project[];
   receivedReviews: Review[];
   disputes: Dispute[];
   documents: Document[];
+  lpos: LPO[];
 }
 
 function formatKES(amount: number): string {
@@ -177,6 +188,12 @@ export default function ContractorDetailPage() {
             {contractor.itaxCompliant && (
               <Badge variant="outline" className="text-green-700 border-green-300 dark:text-green-400">iTax Compliant</Badge>
             )}
+            {contractor.agpoNumber && (
+              <Badge variant="outline" className="text-blue-700 border-blue-300 dark:text-blue-400 gap-1">
+                <Flag className="h-3 w-3" />
+                AGPO {contractor.agpoCategory && `(${contractor.agpoCategory})`}
+              </Badge>
+            )}
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
             {contractor.ncaNumber && <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5" />{contractor.ncaNumber}</span>}
@@ -234,8 +251,9 @@ export default function ContractorDetailPage() {
         {/* Right Content - Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="projects" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="projects">Projects ({contractor.projects.length})</TabsTrigger>
+              <TabsTrigger value="lpos">LPOs ({contractor.lpos.length})</TabsTrigger>
               <TabsTrigger value="reviews">Reviews ({contractor.receivedReviews.length})</TabsTrigger>
               <TabsTrigger value="documents">Documents ({contractor.documents.length})</TabsTrigger>
               <TabsTrigger value="disputes">Disputes ({contractor.disputes.length})</TabsTrigger>
@@ -279,6 +297,60 @@ export default function ContractorDetailPage() {
               <div className="mt-4 p-4 rounded-lg bg-muted/50 text-sm text-muted-foreground">
                 Total Project Value: <span className="font-semibold text-foreground">{formatKES(contractor.totalProjectValue)}</span>
               </div>
+            </TabsContent>
+
+            {/* LPOs Tab */}
+            <TabsContent value="lpos">
+              {contractor.lpos.length === 0 ? (
+                <Card><CardContent className="p-8 text-center text-muted-foreground">No Local Purchase Orders on record.</CardContent></Card>
+              ) : (
+                <>
+                  <div className="mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 flex gap-2 text-sm text-blue-800 dark:text-blue-300">
+                    <FileCheck className="h-4 w-4 mt-0.5 shrink-0" />
+                    <span>Local Purchase Orders (LPOs) are official orders issued by clients authorizing the contractor to proceed with works. Each LPO is tracked from issuance through utilization.</span>
+                  </div>
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>LPO Number</TableHead>
+                            <TableHead>Issuing Organization</TableHead>
+                            <TableHead className="hidden md:table-cell">Value</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="hidden sm:table-cell">Utilization</TableHead>
+                            <TableHead className="hidden lg:table-cell">Valid Until</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {contractor.lpos.map((lpo) => (
+                            <TableRow key={lpo.id}>
+                              <TableCell className="font-mono text-sm font-medium">{lpo.lpoNumber}</TableCell>
+                              <TableCell className="text-sm">{lpo.issuingOrg}</TableCell>
+                              <TableCell className="hidden md:table-cell text-sm font-medium">{formatKES(lpo.lpoValue)}</TableCell>
+                              <TableCell>
+                                <StatusBadge status={lpo.status} />
+                              </TableCell>
+                              <TableCell className="hidden sm:table-cell">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-16 h-2 rounded-full bg-muted overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${lpo.utilizationPct >= 90 ? 'bg-green-500' : lpo.utilizationPct >= 50 ? 'bg-yellow-500' : 'bg-blue-500'}`}
+                                      style={{ width: `${lpo.utilizationPct}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">{lpo.utilizationPct}%</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{formatDate(lpo.validUntil)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
             </TabsContent>
 
             {/* Reviews Tab */}

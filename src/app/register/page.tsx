@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
   ArrowLeft, Building2, Shield, FileText, CheckCircle2, Upload,
-  UserPlus, Mail, Phone, MapPin, Globe, Briefcase, Info,
+  UserPlus, Mail, Phone, MapPin, Globe, Briefcase, Info, Flag,
 } from 'lucide-react';
 
 const counties = [
@@ -43,7 +43,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name: '', email: '', phone: '', companyName: '', ncaNumber: '',
     ncaCategory: '', businessPin: '', physicalAddress: '', county: '',
-    website: '', description: '',
+    website: '', description: '', agpoNumber: '', agpoCategory: '', agpoExpiry: '',
   });
 
   const update = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
@@ -196,6 +196,39 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="description">Company Description</Label>
               <Textarea id="description" placeholder="Describe your company, specializations, and key projects..." rows={3} value={form.description} onChange={(e) => update('description', e.target.value)} />
+            </div>
+            <Separator />
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <div className="flex items-center gap-2 mb-3">
+                <Flag className="h-4 w-4 text-primary" />
+                <span className="font-semibold text-sm">AGPO Registration (Access to Government Procurement Opportunities)</span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                If your company is registered on AGPO (agpo.go.ke) for preferential access to government tenders reserved for youth, women, or PWD-owned enterprises, provide your details below. AGPO registration is verified against the official portal.
+              </p>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="agpoNumber" className="text-xs">AGPO Registration Number</Label>
+                    <Input id="agpoNumber" placeholder="e.g. AGPO/Y/2024/12345" value={form.agpoNumber} onChange={(e) => update('agpoNumber', e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="agpoCategory" className="text-xs">AGPO Category</Label>
+                    <Select value={form.agpoCategory} onValueChange={(v) => update('agpoCategory', v)}>
+                      <SelectTrigger><SelectValue placeholder="Select (optional)" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Youth">Youth</SelectItem>
+                        <SelectItem value="Women">Women</SelectItem>
+                        <SelectItem value="PWD">Persons with Disability</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="agpoExpiry" className="text-xs">AGPO Certificate Expiry Date</Label>
+                  <Input id="agpoExpiry" type="date" value={form.agpoExpiry} onChange={(e) => update('agpoExpiry', e.target.value)} />
+                </div>
+              </div>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setStep(1)}>Back</Button>

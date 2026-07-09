@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScoreBar } from '@/components/score/score-bar';
 import { ScoreRing, getScoreColor, getScoreLabel } from '@/components/score/score-ring';

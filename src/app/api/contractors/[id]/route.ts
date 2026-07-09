@@ -25,6 +25,7 @@ export async function GET(
         include: { project: { select: { title: true } } },
       },
       disputes: { orderBy: { createdAt: 'desc' } },
+      lpos: { orderBy: { issuedDate: 'desc' } },
     },
   });
 

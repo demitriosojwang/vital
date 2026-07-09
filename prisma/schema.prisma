@@ -47,6 +47,10 @@ model ContractorProfile {
   itaxCompliant     Boolean  @default(false)
   isBlacklisted     Boolean  @default(false)
   blacklistReason   String?
+  agpoNumber        String?
+  agpoCategory      String?
+  agpoVerified      Boolean  @default(false)
+  agpoExpiry        DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -55,6 +59,7 @@ model ContractorProfile {
   documents      ContractorDocument[]
   receivedReviews Review[]
   disputes       Dispute[]
+  lpos           LocalPurchaseOrder[]
 }
 
 model ClientProfile {
@@ -90,6 +95,7 @@ model Project {
   client      ClientProfile?    @relation(fields: [clientId], references: [id])
   reviews     Review[]
   milestones  Milestone[]
+  lpos        LocalPurchaseOrder[]
 }
 
 model Review {
@@ -164,4 +170,24 @@ model Payment {
   status    String   @default("pending")
   mpesaRef  String?
   createdAt DateTime @default(now())
+}
+
+model LocalPurchaseOrder {
+  id             String   @id @default(cuid())
+  contractorId   String
+  lpoNumber      String
+  issuingOrg     String
+  scopeOfWorks   String?
+  lpoValue       Int
+  issuedDate     DateTime?
+  validUntil     DateTime?
+  projectId      String?
+  status         String   @default("issued")
+  utilizationPct  Int      @default(0)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  contractor ContractorProfile @relation(fields: [contractorId], references: [id])
+  project    Project?           @relation(fields: [projectId], references: [id])
 }
